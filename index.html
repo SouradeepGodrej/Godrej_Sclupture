@@ -13,16 +13,9 @@
     <header class="header">
         <div class="header-container">
             <div class="logo">
-                <img src="https://via.placeholder.com/150x40/004B49/FFFFFF?text=Godrej+Properties"
-                    alt="Godrej Properties">
+                <img src="images\logo\FINAL GODREJ LOGO 1(WHITE)-01 (2) copy.png" alt="Godrej Properties">
             </div>
             <div class="header-right">
-                <div class="search-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <path d="21 21l-4.35-4.35"></path>
-                    </svg>
-                </div>
                 <div class="menu-toggle">
                     <span></span>
                     <span></span>
@@ -61,24 +54,27 @@
         <section class="hero-slider">
             <div class="slider-container">
                 <div class="slide active">
-                    <img src="images/img-1.png" alt="Slide 1">
+                    <img src="images\sculpturebackground\buddha-1177009_1280.jpg" alt="Slide 1">
                 </div>
                 <div class="slide">
-                    <img src="images/img-2.png" alt="Slide 2">
+                    <img src="images\sculpturebackground\elham-abdi-aiHJwVEVvx0-unsplash.jpg" alt="Slide 2">
                 </div>
                 <div class="slide">
-                    <img src="images/img-3.png" alt="Slide 3">
+                    <img src="images\sculpturebackground\sand-castle-4313223_1280.jpg" alt="Slide 3">
                 </div>
                 <div class="slide">
-                    <img src="images/img-4.png" alt="Slide 4">
+                    <img src="images\sculpturebackground\rio-1303951_1280.jpg" alt="Slide 4">
                 </div>
+            </div>
+        </section>
 
-                <div class="slider-dots">
-                    <span class="dot active" data-slide="0"></span>
-                    <span class="dot" data-slide="1"></span>
-                    <span class="dot" data-slide="2"></span>
-                    <span class="dot" data-slide="3"></span>
-                </div>
+        <!-- Separate section for dots -->
+        <section class="slider-navigation">
+            <div class="slider-dots">
+                <span class="dot active" data-slide="0"></span>
+                <span class="dot" data-slide="1"></span>
+                <span class="dot" data-slide="2"></span>
+                <span class="dot" data-slide="3"></span>
             </div>
         </section>
 
@@ -88,22 +84,32 @@
                 <h2 class="section-title">Featured Artworks</h2>
                 <div class="artworks-slider">
                     <div class="artwork-item">
-                        <img src="images/img-1.png" alt="Artwork 1">
+                        <img src="images\sculpturebackground\buddha-1177009_1280.jpg" alt="Artwork 1">
                         <h3>Contemporary Vision</h3>
                         <p>Modern artistic expression</p>
                     </div>
                     <div class="artwork-item">
-                        <img src="images/img-2.png" alt="Artwork 2">
+                        <img src="images\sculpturebackground\lighthouse-5794639_1280.jpg" alt="Artwork 2">
                         <h3>Nature's Symphony</h3>
                         <p>Harmony in natural forms</p>
                     </div>
                     <div class="artwork-item">
-                        <img src="images/img-3.png" alt="Artwork 3">
+                        <img src="images\sculpturebackground\shwezigon-pagoda-6515356_1280.jpg" alt="Artwork 3">
                         <h3>Urban Landscapes</h3>
                         <p>City life captured in art</p>
                     </div>
                     <div class="artwork-item">
-                        <img src="images/img-4.png" alt="Artwork 4">
+                        <img src="images\sculpturebackground\elham-abdi-aiHJwVEVvx0-unsplash.jpg" alt="Artwork 4">
+                        <h3>Abstract Dreams</h3>
+                        <p>Surreal artistic journey</p>
+                    </div>
+                    <div class="artwork-item">
+                        <img src="images\sculpturebackground\sand-castle-4313223_1280.jpg" alt="Artwork 5">
+                        <h3>Abstract Dreams</h3>
+                        <p>Surreal artistic journey</p>
+                    </div>
+                    <div class="artwork-item">
+                        <img src="images\sculpturebackground\rio-1303951_1280.jpg" alt="Artwork 6">
                         <h3>Abstract Dreams</h3>
                         <p>Surreal artistic journey</p>
                     </div>
@@ -114,8 +120,7 @@
 
         <section class="qr-section">
             <div class="qr-background-image">
-                <img src="https://via.placeholder.com/1200x600/004B49/FFFFFF?text=QR+Background+Image"
-                    alt="QR Section Background">
+                <img src="images\sculpturebackground\buddha-1177009_1280.jpg" alt="QR Section Background">
             </div>
             <div class="qr-overlay-content">
                 <div class="qr-main-content">
@@ -125,7 +130,7 @@
                 </div>
                 <div class="qr-code-corner">
                     <div class="qr-code-box">
-                        <img src="https://via.placeholder.com/120x120/FFFFFF/004B49?text=QR" alt="QR Code">
+                        <img src="images\qr_code\frame.png" alt="QR Code">
                     </div>
                     <p class="qr-text">Scan to explore</p>
                 </div>
@@ -199,11 +204,14 @@
             <div class="footer-inner">
                 <div class="footer-content">
                     <div class="footer-logo">
-                        <img src="https://via.placeholder.com/120x30/004B49/FFFFFF?text=Godrej+Properties"
-                            alt="Godrej Properties">
+                        <img src="images\logo\Godrej Properties Logo.png" alt="Godrej Properties">
                     </div>
                     <div class="footer-text">
-                        <p>&copy; 2025 Godrej Properties. All rights reserved.</p>
+                        <p>Copyright &copy; 2025. Godrej Properties</p>
+                        <div class="footer-text-2">
+                            <p onclick="handleDisclaimer()">Disclaimer</p>
+                            <p onclick="handleSitemap()">Sitemap</p>
+                        </div>
                     </div>
                 </div>
             </div>
