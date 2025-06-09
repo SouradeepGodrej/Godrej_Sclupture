@@ -46,6 +46,7 @@ body {
 
 .logo img {
     height: 50px;
+    cursor: pointer;
     width: auto;
     max-width: 200px;
     object-fit: contain;
