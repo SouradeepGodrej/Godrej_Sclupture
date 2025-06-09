@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Godrej Properties - Artworks</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <img src="https://via.placeholder.com/150x40/004B49/FFFFFF?text=Godrej+Properties"
+                    alt="Godrej Properties">
+            </div>
+            <div class="header-right">
+                <div class="search-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="21 21l-4.35-4.35"></path>
+                    </svg>
+                </div>
+                <div class="menu-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Side Panel -->
+    <div class="side-panel" id="sidePanel">
+        <div class="panel-header">
+            <button class="close-btn" id="closePanel">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <nav class="panel-nav">
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#artworks">Artworks</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Main Content -->
+    <main id="mainContent">
+        <!-- Hero Slider -->
+        <section class="hero-slider">
+            <div class="slider-container">
+                <div class="slide active">
+                    <img src="https://via.placeholder.com/1200x500/004B49/FFFFFF?text=Slide+1" alt="Slide 1">
+                </div>
+                <div class="slide">
+                    <img src="https://via.placeholder.com/1200x500/2C5F2D/FFFFFF?text=Slide+2" alt="Slide 2">
+                </div>
+                <div class="slide">
+                    <img src="https://via.placeholder.com/1200x500/97BC62/FFFFFF?text=Slide+3" alt="Slide 3">
+                </div>
+                <div class="slide">
+                    <img src="https://via.placeholder.com/1200x500/C5A572/FFFFFF?text=Slide+4" alt="Slide 4">
+                </div>
+
+                <div class="slider-dots">
+                    <span class="dot active" data-slide="0"></span>
+                    <span class="dot" data-slide="1"></span>
+                    <span class="dot" data-slide="2"></span>
+                    <span class="dot" data-slide="3"></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Artworks Section -->
+        <section class="artworks-section">
+            <div class="container">
+                <h2 class="section-title">Featured Artworks</h2>
+                <div class="artworks-slider">
+                    <div class="artwork-item">
+                        <img src="https://via.placeholder.com/300x200/004B49/FFFFFF?text=Artwork+1" alt="Artwork 1">
+                        <h3>Contemporary Vision</h3>
+                        <p>Modern artistic expression</p>
+                    </div>
+                    <div class="artwork-item">
+                        <img src="https://via.placeholder.com/300x200/2C5F2D/FFFFFF?text=Artwork+2" alt="Artwork 2">
+                        <h3>Nature's Symphony</h3>
+                        <p>Harmony in natural forms</p>
+                    </div>
+                    <div class="artwork-item">
+                        <img src="https://via.placeholder.com/300x200/97BC62/FFFFFF?text=Artwork+3" alt="Artwork 3">
+                        <h3>Urban Landscapes</h3>
+                        <p>City life captured in art</p>
+                    </div>
+                    <div class="artwork-item">
+                        <img src="https://via.placeholder.com/300x200/C5A572/FFFFFF?text=Artwork+4" alt="Artwork 4">
+                        <h3>Abstract Dreams</h3>
+                        <p>Surreal artistic journey</p>
+                    </div>
+                </div>
+                <button class="view-all-btn" id="viewAllArtworks">View All Artworks</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Artworks Detail Page -->
+    <div class="artwork-details-page" id="artworkDetailsPage">
+        <header class="detail-header">
+            <button class="back-btn" id="backBtn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15,18 9,12 15,6"></polyline>
+                </svg>
+                Back to Gallery
+            </button>
+        </header>
+
+        <div class="artwork-details-container">
+            <div class="artwork-detail">
+                <div class="artwork-content left-text">
+                    <div class="artwork-text">
+                        <h2>Contemporary Vision</h2>
+                        <p>This masterpiece represents the convergence of traditional techniques with modern
+                            sensibilities. The artist explores themes of identity and transformation through bold
+                            strokes and vibrant colors that speak to the contemporary human experience.</p>
+                        <p>Created using mixed media on canvas, this piece invites viewers to contemplate the
+                            relationship between past and present, tradition and innovation.</p>
+                    </div>
+                    <div class="artwork-image">
+                        <img src="https://via.placeholder.com/400x300/004B49/FFFFFF?text=Contemporary+Vision"
+                            alt="Contemporary Vision">
+                    </div>
+                </div>
+            </div>
+
+            <div class="artwork-detail">
+                <div class="artwork-content right-text">
+                    <div class="artwork-image">
+                        <img src="https://via.placeholder.com/400x300/2C5F2D/FFFFFF?text=Nature's+Symphony"
+                            alt="Nature's Symphony">
+                    </div>
+                    <div class="artwork-text">
+                        <h2>Nature's Symphony</h2>
+                        <p>Inspired by the rhythmic patterns found in nature, this artwork captures the essence of
+                            organic harmony. The flowing lines and earthy tones create a visual melody that resonates
+                            with the viewer's connection to the natural world.</p>
+                        <p>The piece utilizes sustainable materials and eco-friendly pigments, reflecting the artist's
+                            commitment to environmental consciousness.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="artwork-detail">
+                <div class="artwork-content left-text">
+                    <div class="artwork-text">
+                        <h2>Urban Landscapes</h2>
+                        <p>A dynamic exploration of city life, this artwork captures the energy and complexity of urban
+                            environments. Through layered textures and architectural forms, the piece reflects the
+                            constant motion and evolution of metropolitan spaces.</p>
+                        <p>The interplay of light and shadow creates depth and movement, inviting viewers to discover
+                            new details with each viewing.</p>
+                    </div>
+                    <div class="artwork-image">
+                        <img src="https://via.placeholder.com/400x300/97BC62/FFFFFF?text=Urban+Landscapes"
+                            alt="Urban Landscapes">
+                    </div>
+                </div>
+            </div>
+
+            <div class="artwork-detail">
+                <div class="artwork-content right-text">
+                    <div class="artwork-image">
+                        <img src="https://via.placeholder.com/400x300/C5A572/FFFFFF?text=Abstract+Dreams"
+                            alt="Abstract Dreams">
+                    </div>
+                    <div class="artwork-text">
+                        <h2>Abstract Dreams</h2>
+                        <p>This ethereal composition invites viewers into a realm of imagination and possibility. The
+                            fluid forms and dreamlike qualities create a sense of movement that transcends the
+                            boundaries of traditional representation.</p>
+                        <p>Created through an innovative technique combining digital and traditional media, this piece
+                            represents the artist's vision of infinite creative potential.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Code Page -->
+    <section class="qr-section">
+        <div class="qr-background-image">
+            <img src="https://via.placeholder.com/1200x600/004B49/FFFFFF?text=QR+Background+Image"
+                alt="QR Section Background">
+        </div>
+        <div class="qr-overlay-content">
+            <div class="qr-main-content">
+                <h2>Discover Our Digital Gallery</h2>
+                <p>Experience our complete collection through immersive virtual tours and exclusive digital content.</p>
+            </div>
+            <div class="qr-code-corner">
+                <div class="qr-code-box">
+                    <img src="https://via.placeholder.com/120x120/FFFFFF/004B49?text=QR" alt="QR Code">
+                </div>
+                <p class="qr-text">Scan to explore</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-inner">
+                <div class="footer-content">
+                    <div class="footer-logo">
+                        <img src="https://via.placeholder.com/120x30/004B49/FFFFFF?text=Godrej+Properties"
+                            alt="Godrej Properties">
+                    </div>
+                    <div class="footer-text">
+                        <p>&copy; 2025 Godrej Properties. All rights reserved.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="jquery.js"></script>
+    <script src="turn.js"></script>
+    <script>
+        $(".flipbook").turn();
+    </script>
+</body>
+
+</html>
