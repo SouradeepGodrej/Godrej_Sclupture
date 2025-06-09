@@ -20,7 +20,8 @@ body {
 
 /* Header Styles */
 .header {
-    height: 80px; /* Reduced from 100px for better mobile experience */
+    height: 80px;
+    /* Reduced from 100px for better mobile experience */
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%);
     position: fixed;
     top: 0;
@@ -41,7 +42,8 @@ body {
 }
 
 .logo {
-    flex-shrink: 0; /* Prevent logo from shrinking */
+    flex-shrink: 0;
+    /* Prevent logo from shrinking */
 }
 
 .logo img {
@@ -71,7 +73,8 @@ body {
     border-radius: 50%;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    flex-shrink: 0; /* Prevent shrinking */
+    flex-shrink: 0;
+    /* Prevent shrinking */
 }
 
 .menu-toggle span {
@@ -199,12 +202,15 @@ body {
     height: 100%;
     object-fit: cover;
 }
+
 .slider-navigation {
     padding: 20px 0;
-    background-color: #f8f9fa; /* Optional: add background color */
+    background-color: #f8f9fa;
+    /* Optional: add background color */
     display: flex;
     justify-content: center;
 }
+
 .slider-dots {
     display: flex;
     gap: 15px;
@@ -221,7 +227,8 @@ body {
 }
 
 .dot.active {
-    width: 20px; /* Expanded width when active */
+    width: 20px;
+    /* Expanded width when active */
     background-color: #4b4b4b;
 }
 
@@ -235,7 +242,8 @@ body {
     padding: 60px 0;
     background-color: #f8f9fa;
     width: 100%;
-    overflow-x: hidden; /* Prevent horizontal scroll issues */
+    overflow-x: hidden;
+    /* Prevent horizontal scroll issues */
 }
 
 .section-title {
@@ -243,8 +251,10 @@ body {
     font-size: 2.5rem;
     color: #004B49;
     margin-bottom: 50px;
-    padding: 0 20px; /* Add padding for mobile */
-    word-wrap: break-word; /* Handle long titles */
+    padding: 0 20px;
+    /* Add padding for mobile */
+    word-wrap: break-word;
+    /* Handle long titles */
 }
 
 .artworks-slider {
@@ -253,7 +263,8 @@ body {
     overflow-x: auto;
     padding: 20px;
     scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    -webkit-overflow-scrolling: touch;
+    /* Smooth scrolling on iOS */
     /* scrollbar-width: thin;
     scrollbar-color: #004B49 #f1f1f1; */
 }
@@ -264,13 +275,15 @@ body {
 
 .artwork-item {
     min-width: 300px;
-    width: 300px; /* Fixed width for consistency */
+    width: 300px;
+    /* Fixed width for consistency */
     background: white;
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    flex-shrink: 0; /* Prevent shrinking */
+    flex-shrink: 0;
+    /* Prevent shrinking */
 }
 
 .artwork-item:hover {
@@ -282,7 +295,8 @@ body {
     width: 100%;
     height: 200px;
     object-fit: cover;
-    display: block; /* Remove any inline spacing */
+    display: block;
+    /* Remove any inline spacing */
 }
 
 .artwork-item h3 {
@@ -292,6 +306,7 @@ body {
     margin: 0;
     line-height: 1.3;
 }
+
 .artwork-item p {
     padding: 0 20px 20px;
     color: #666;
@@ -326,8 +341,10 @@ body {
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%);
     min-height: calc(100vh - 56px);
     flex-direction: column;
-    align-items: center; /* Center horizontally */
-    justify-content: center; /* Center vertically */
+    align-items: center;
+    /* Center horizontally */
+    justify-content: center;
+    /* Center vertically */
 }
 
 .artwork-details-page.active {
@@ -369,7 +386,8 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 100px 20px 40px; /* Top padding to account for header */
+    padding: 100px 20px 40px;
+    /* Top padding to account for header */
     min-height: calc(100vh - 56px);
 }
 
@@ -377,7 +395,8 @@ body {
 .flipbook {
     width: 1000px;
     height: 600px;
-    margin: 0 auto 40px auto; /* Center horizontally and add bottom margin */
+    margin: 0 auto 40px auto;
+    /* Center horizontally and add bottom margin */
     display: block;
 }
 
@@ -385,10 +404,10 @@ body {
     background: #c0392b !important;
     color: #fff;
     font-weight: bold;
-    border: none; 
+    border: none;
 }
 
-.flipbook .hard small{
+.flipbook .hard small {
     font-style: italic;
     font-weight: lighter;
     opacity: 0.7;
@@ -405,13 +424,13 @@ body {
     border: 1px solid rgba(0, 0, 0, 0.11);
 }
 
-.page img{
+.page img {
     width: 70%;
     object-fit: cover;
     margin: auto;
 }
 
-.flipbook .page small{
+.flipbook .page small {
     font-size: 14px;
     margin-bottom: 10px;
 }
@@ -420,10 +439,12 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 40px; /* Space between buttons */
+    gap: 40px;
+    /* Space between buttons */
     width: 100%;
     max-width: 400px;
-    margin: 0 auto; /* Center the controls */
+    margin: 0 auto;
+    /* Center the controls */
 }
 
 .page-btn {
@@ -571,7 +592,8 @@ body {
     max-width: 1400px;
     margin: 0 auto;
     padding: 0 20px;
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    flex-wrap: wrap;
+    /* Allow wrapping on smaller screens */
     gap: 20px;
 }
 
@@ -598,6 +620,7 @@ footer-logo {
     margin: 0;
     white-space: nowrap;
 }
+
 .footer-text-2 {
     display: flex;
     gap: 20px;
@@ -622,33 +645,59 @@ footer-text-2 p:hover {
         margin: 0 auto;
         padding: 0 40px;
     }
+
     .logo img {
         height: 60px;
     }
-    
+
     .container {
         max-width: 1400px;
         padding: 0 40px;
     }
-    
-    .section-title {
-        font-size: 3rem;
+
+    .section-title-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 2rem 0;
+        gap: 1rem;
     }
-    
+
+    .section-title {
+        color: grey;
+        font-weight: 600;
+        font-size: 1.5rem;
+        white-space: nowrap;
+    }
+
+    .line {
+        flex: 1;
+        height: 2px;
+    }
+
+    .left-line {
+        background: linear-gradient(to left, transparent, rgba(128, 128, 128, 0.8));
+    }
+
+    .right-line {
+        background: linear-gradient(to right, transparent, rgba(128, 128, 128, 0.8));
+    }
+
+
     .hero-slider {
         height: 70vh;
         min-height: 600px;
     }
-    
+
     .flipbook {
         width: 1200px;
         height: 720px;
     }
-    
+
     .qr-main-content h2 {
         font-size: 3.5rem;
     }
-    
+
     .footer-content {
         max-width: 1600px;
     }
@@ -660,12 +709,12 @@ footer-text-2 p:hover {
         max-width: 1200px;
         padding: 0 30px;
     }
-    
+
     .flipbook {
         width: 1000px;
         height: 600px;
     }
-    
+
     .hero-slider {
         height: 60vh;
         min-height: 540px;
@@ -678,30 +727,30 @@ footer-text-2 p:hover {
         max-width: 960px;
         padding: 0 25px;
     }
-    
+
     .section-title {
         font-size: 2.3rem;
     }
-    
+
     .hero-slider {
         height: 55vh;
         min-height: 480px;
     }
-    
+
     .flipbook {
         width: 90%;
         max-width: 800px;
         height: 480px;
     }
-    
+
     .artwork-item {
         min-width: 280px;
     }
-    
+
     .qr-main-content h2 {
         font-size: 2.8rem;
     }
-    
+
     .qr-overlay-content {
         padding: 35px;
     }
@@ -712,47 +761,47 @@ footer-text-2 p:hover {
     .container {
         padding: 0 20px;
     }
-    
+
     .section-title {
         font-size: 2.2rem;
     }
-    
+
     .hero-slider {
         height: 50vh;
         min-height: 400px;
     }
-    
+
     .flipbook {
         width: 95%;
         max-width: 700px;
         height: 420px;
     }
-    
+
     .artwork-item {
         min-width: 260px;
     }
-    
+
     .artworks-slider {
         gap: 25px;
     }
-    
+
     .qr-main-content h2 {
         font-size: 2.5rem;
     }
-    
+
     .qr-overlay-content {
         padding: 30px;
         flex-direction: column;
         text-align: center;
         gap: 30px;
     }
-    
+
     .qr-code-corner {
         position: relative;
         bottom: auto;
         right: auto;
     }
-    
+
     .footer-content {
         flex-direction: column;
         gap: 20px;
@@ -765,7 +814,7 @@ footer-text-2 p:hover {
     .header-container {
         padding: 0 15px;
     }
-    
+
     .container {
         padding: 0 15px;
     }
@@ -774,7 +823,7 @@ footer-text-2 p:hover {
         font-size: 1.8rem;
         margin-bottom: 30px;
     }
-    
+
     /* Make hero slider more mobile-friendly */
     .hero-slider {
         height: 40vh;
@@ -793,11 +842,11 @@ footer-text-2 p:hover {
     .artwork-text h2 {
         font-size: 1.5rem;
     }
-    
+
     .artwork-item {
         min-width: 250px;
     }
-    
+
     .artworks-slider {
         gap: 20px;
         padding: 15px 0;
@@ -806,19 +855,19 @@ footer-text-2 p:hover {
     .flipbook-container {
         padding: 80px 15px 20px;
     }
-    
+
     .flipbook {
         width: 95%;
         max-width: 500px;
         height: 300px;
     }
-    
+
     .flipbook-controls {
         gap: 20px;
         max-width: 300px;
         margin-top: 20px;
     }
-    
+
     .page-btn {
         padding: 10px 16px;
         font-size: 0.9rem;
@@ -880,12 +929,12 @@ footer-text-2 p:hover {
     .container {
         padding: 0 10px;
     }
-    
+
     .hero-slider {
         height: 35vh;
         min-height: 250px;
     }
-    
+
     .section-title {
         font-size: 1.6rem;
         margin-bottom: 25px;
@@ -905,17 +954,17 @@ footer-text-2 p:hover {
         max-width: 350px;
         height: 210px;
     }
-    
+
     .flipbook-container {
         padding: 70px 10px 15px;
     }
-    
+
     .flipbook-controls {
         flex-direction: column;
         gap: 12px;
         margin-top: 15px;
     }
-    
+
     .page-btn {
         width: 130px;
         justify-content: center;
@@ -931,39 +980,39 @@ footer-text-2 p:hover {
         font-size: 1.6rem;
         margin-bottom: 12px;
     }
-    
+
     .qr-main-content p {
         font-size: 0.9rem;
     }
-    
+
     .qr-overlay-content {
         padding: 20px 10px;
         gap: 20px;
     }
-    
+
     .qr-code-box {
         padding: 10px;
     }
-    
+
     .qr-code-box img {
         width: 70px;
         height: 70px;
     }
-    
+
     .qr-text {
         font-size: 0.75rem;
     }
-    
+
     .view-all-btn {
         padding: 12px 30px;
         font-size: 1rem;
         margin: 30px auto 0;
     }
-    
+
     .header-container {
         padding: 0 10px;
     }
-    
+
     .logo img {
         height: 45px;
     }
@@ -974,24 +1023,24 @@ footer-text-2 p:hover {
     .hero-slider {
         height: 200px;
     }
-    
+
     .section-title {
         font-size: 1.4rem;
     }
-    
+
     .flipbook {
         max-width: 280px;
         height: 168px;
     }
-    
+
     .artwork-item {
         min-width: 200px;
     }
-    
+
     .qr-main-content h2 {
         font-size: 1.4rem;
     }
-    
+
     .qr-code-box img {
         width: 60px;
         height: 60px;
