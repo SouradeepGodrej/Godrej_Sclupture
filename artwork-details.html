@@ -31,6 +31,7 @@
             </button>
         </div>
     </header>
+    
     <!-- Artwork Details Page Content -->
     <div class="artwork-details-page">
         <div class="flipbook-container">
@@ -97,78 +98,159 @@
             // Function to get flipbook dimensions based on screen size
             function getFlipbookDimensions() {
                 const screenWidth = window.innerWidth;
-                let width;
+                const screenHeight = window.innerHeight;
+                let width, height;
 
-                if (screenWidth <= 480) {
-                    // Extra small screens
-                    width = Math.min(screenWidth - 40, 300);
-                } else if (screenWidth <= 768) {
-                    // Mobile screens
+                // iPhone and small mobile devices
+                if (screenWidth <= 390) {
+                    width = Math.min(screenWidth - 30, 300);
+                    height = width / 2;
+                }
+                // Standard mobile phones (iPhone 13, 14, 15, 16)
+                else if (screenWidth <= 430) {
+                    width = Math.min(screenWidth - 40, 350);
+                    height = width / 2;
+                }
+                // Large mobile phones and small tablets
+                else if (screenWidth <= 768) {
                     width = Math.min(screenWidth - 60, 400);
-                } else if (screenWidth <= 991) {
-                    // Tablet screens
-                    width = 600;
-                } else {
-                    // Desktop screens
+                    height = width / 2;
+                }
+                // Tablets (iPad, Android tablets)
+                else if (screenWidth <= 1024) {
+                    width = Math.min(screenWidth - 100, 600);
+                    height = width / 2;
+                }
+                // Small laptops and large tablets
+                else if (screenWidth <= 1366) {
+                    width = 800;
+                    height = 400;
+                }
+                // Desktop screens
+                else {
                     width = 1800;
+                    height = 900;
                 }
 
-                const height = width / 2; // Enforce 2:1 ratio
+                // Ensure the flipbook doesn't exceed viewport height
+                const maxHeight = screenHeight - 250; // More space for headers/controls
+                if (height > maxHeight) {
+                    height = maxHeight;
+                    width = height * 2;
+                }
 
                 return {
                     width,
                     height,
-                    display: (screenWidth <= 991) ? 'single' : 'double'
+                    display: (screenWidth <= 768) ? 'single' : 'double'
                 };
             }
 
+            // Additional function to get device-specific settings
+            function getDeviceSpecificSettings() {
+                const userAgent = navigator.userAgent;
+                const screenWidth = window.innerWidth;
+
+                // iPhone specific adjustments
+                if (/iPhone/.test(userAgent)) {
+                    if (screenWidth <= 375) {
+                        // iPhone SE, iPhone 12 mini
+                        return { padding: 60, controlGap: 15 };
+                    } else if (screenWidth <= 390) {
+                        // iPhone 12, 13, 14
+                        return { padding: 70, controlGap: 20 };
+                    } else if (screenWidth <= 430) {
+                        // iPhone 14 Plus, 15 Plus, 16 Pro Max
+                        return { padding: 80, controlGap: 25 };
+                    }
+                }
+
+                // Default settings
+                return { padding: 80, controlGap: 20 };
+            }
 
             // Initialize flipbook with responsive settings
             function initializeFlipbook() {
                 const dimensions = getFlipbookDimensions();
-                const mobile = isMobile();
+                const mobile = window.innerWidth <= 768;
+                let currentPage = 1;
 
-                // Destroy existing flipbook if it exists
+                // Store current page if flipbook exists
                 if ($(".flipbook").turn("is")) {
+                    currentPage = $(".flipbook").turn("page");
                     $(".flipbook").turn("destroy");
                 }
 
-                // Initialize flipbook with responsive settings
+                // Set fixed container dimensions first
+                $('.flipbook-container').css({
+                    'min-height': dimensions.height + 100 + 'px',
+                    'display': 'flex',
+                    'flex-direction': 'column',
+                    'align-items': 'center',
+                    'justify-content': 'center'
+                });
+
+                // Initialize flipbook with stable settings
                 $(".flipbook").turn({
                     width: dimensions.width,
                     height: dimensions.height,
                     autoCenter: true,
-                    gradients: !mobile, // Disable gradients on mobile for better performance
-                    elevation: mobile ? 20 : 50, // Reduce elevation on mobile
-                    display: dimensions.display, // 'single' for mobile, 'double' for desktop
+                    gradients: !mobile,
+                    elevation: mobile ? 0 : 20, // Reduce elevation to prevent position shifts
+                    display: dimensions.display,
+                    acceleration: false, // Disable acceleration to prevent jumping
+                    page: currentPage, // Start at the stored page
+                    duration: mobile ? 600 : 1000, // Slower animation on mobile
                     when: {
+                        turning: function (event, page, view) {
+                            // Prevent scroll during page turn
+                            $('body').addClass('turning');
+                        },
                         turned: function (event, page, view) {
+                            // Re-enable scroll after page turn
+                            $('body').removeClass('turning');
                             updateNavigationButtons();
+
+                            // Ensure flipbook stays centered after turn
+                            setTimeout(function () {
+                                $('.flipbook').css({
+                                    'margin': '0 auto',
+                                    'display': 'block',
+                                    'position': 'relative'
+                                });
+                            }, 100);
                         },
                         missing: function (event, pages) {
-                            // Handle missing pages if needed
                             console.log('Missing pages:', pages);
                         }
                     }
                 });
 
-                // Update navigation buttons initial state
+                // Force center positioning
+                $('.flipbook').css({
+                    'margin': '0 auto',
+                    'display': 'block',
+                    'position': 'relative',
+                    'top': '0',
+                    'left': '0',
+                    'transform': 'none'
+                });
+
                 updateNavigationButtons();
             }
-
             // Initialize flipbook on page load
             initializeFlipbook();
 
             // Reinitialize flipbook on window resize with debouncing
             let resizeTimeout;
-            $(window).resize(function () {
+            $(window).on('resize orientationchange', function () {
                 clearTimeout(resizeTimeout);
                 resizeTimeout = setTimeout(function () {
                     const currentPage = $(".flipbook").turn("page");
                     initializeFlipbook();
                     // Restore current page after resize
                     $(".flipbook").turn("page", currentPage);
-                }, 250);
+                }, 300);
             });
 
             // Previous page button

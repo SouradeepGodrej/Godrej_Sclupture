@@ -95,6 +95,7 @@
     min-height: calc(100vh - 56px);
     width: 100%;
     box-sizing: border-box;
+    gap: 40px;
 }
 
 /* Flipbook section */
@@ -197,44 +198,44 @@
         padding: 0 40px;
     }
 
-    .flipbook {
-        width: 1200px;
-        height: 1200px;
-    }
+    /* .flipbook {
+        width: 1800px;
+        height: 900px;
+    } */
 }
 @media (min-width: 1200px) and (max-width: 1399px) {
 
-    .flipbook {
+    /* .flipbook {
         width: 1000px;
         height: 1000px;
         align-items: center;
         justify-content: center;
-    }
+    } */
 }
 @media (min-width: 992px) and (max-width: 1199px) {
-    .flipbook {
+    /* .flipbook {
         width: 90%;
         max-width: 800px;
         height: 800px;
-    }
+    } */
 }
 @media (min-width: 769px) and (max-width: 991px) {
-    .flipbook {
+    /* .flipbook {
         width: 90%;
         max-width: 700px;
         height: 700px;
-    }
+    } */
 }
 @media (max-width: 768px) {
     .flipbook-container {
         padding: 80px 15px 20px;
     }
 
-    .flipbook {
+    /* .flipbook {
         width: 95%;
         max-width: 500px;
         height: 500px;
-    }
+    } */
 
     .flipbook-controls {
         gap: 20px;
@@ -255,11 +256,11 @@
     }
 }
 @media (max-width: 480px) {
-    .flipbook {
+    /* .flipbook {
         width: 100%;
         max-width: 350px;
         height: 350px;
-    }
+    } */
 
     .flipbook-container {
         padding: 70px 10px 15px;
@@ -279,9 +280,8 @@
     }
 }
 @media (max-width: 320px) {
-
-    .flipbook {
+    /* .flipbook {
         max-width: 280px;
         height: 280px;
-    }
+    } */
 }
