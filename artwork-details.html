@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Artwork Details - Godrej Properties</title>
     <link rel="stylesheet" href="styles.css">
-     <link rel="stylesheet" href="styles_new.css">
+    <link rel="stylesheet" href="styles_new.css">
 </head>
 
 <body>
@@ -97,37 +97,31 @@
             // Function to get flipbook dimensions based on screen size
             function getFlipbookDimensions() {
                 const screenWidth = window.innerWidth;
+                let width;
 
                 if (screenWidth <= 480) {
                     // Extra small screens
-                    return {
-                        width: Math.min(screenWidth - 40, 300),
-                        height: Math.min(screenWidth - 40, 300) * 0.7, // 3:2.1 ratio
-                        display: 'single'
-                    };
+                    width = Math.min(screenWidth - 40, 300);
                 } else if (screenWidth <= 768) {
                     // Mobile screens
-                    return {
-                        width: Math.min(screenWidth - 60, 400),
-                        height: Math.min(screenWidth - 60, 400) * 0.7,
-                        display: 'single'
-                    };
+                    width = Math.min(screenWidth - 60, 400);
                 } else if (screenWidth <= 991) {
                     // Tablet screens
-                    return {
-                        width: 600,
-                        height: 420,
-                        display: 'double'
-                    };
+                    width = 600;
                 } else {
                     // Desktop screens
-                    return {
-                        width: 1200,
-                        height: 600,
-                        display: 'double'
-                    };
+                    width = 1800;
                 }
+
+                const height = width / 2; // Enforce 2:1 ratio
+
+                return {
+                    width,
+                    height,
+                    display: (screenWidth <= 991) ? 'single' : 'double'
+                };
             }
+
 
             // Initialize flipbook with responsive settings
             function initializeFlipbook() {
@@ -308,7 +302,7 @@
         function goBack() {
             window.history.back();
         }
-    </script>   
+    </script>
 </body>
 
 </html>
