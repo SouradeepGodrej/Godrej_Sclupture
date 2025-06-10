@@ -119,7 +119,7 @@
                     </div>
                 </div>
                 <div class="button-wrapper">
-                    <a href="artwork-details.html" class="view-all-btn">View All Artworks</a>  
+                    <a href="artwork-details.html" class="view-all-btn">View All Artworks</a>
                 </div>
             </div>
         </section>
@@ -270,6 +270,11 @@
                 $("#nextPage").prop("disabled", currentPage >= totalPages);
             }
         }
+    </script>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            setupArtworkSlider();
+        });
     </script>
 </body>
 
