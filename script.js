@@ -5,7 +5,6 @@ const slides = document.querySelectorAll('.slide');
 const dots = document.querySelectorAll('.dot');
 let touchStartX = 0;
 let touchEndX = 0;
-const isMobile = window.innerWidth <= 768;
 
 // DOM Elements
 const menuToggle = document.querySelector('.menu-toggle');
@@ -15,38 +14,12 @@ const overlay = document.getElementById('overlay');
 const mainContent = document.getElementById('mainContent');
 const qrPage = document.getElementById('qrPage');
 
-$(".flipbook").turn({
-    width: isMobile ? 350 : 1000,
-    height: isMobile ? 300 : 600,
-    autoCenter: true,
-    gradients: true,
-    elevation: 50,
-    display: isMobile ? 'single' : 'double'  // This is the key change
-});
-
-$(window).resize(function() {
-    const isMobile = window.innerWidth <= 768;
-    $(".flipbook").turn('destroy');
-    $(".flipbook").turn({
-        width: isMobile ? 350 : 1000,
-        height: isMobile ? 300 : 600,
-        autoCenter: true,
-        gradients: true,
-        elevation: 50,
-        display: isMobile ? 'single' : 'double'
-    });
-});
-
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
     initializeSlider();
     setupEventListeners();
     setupArtworkSlider();
     setupScrollAnimations();
-
-    setTimeout(() => {
-        initializeFlipbook();
-    }, 100);
 });
 
 // Slider functionality
@@ -240,55 +213,6 @@ function hideQRPage() {
         document.body.style.overflow = 'auto';
     }
 }
-
-// Add this function for navigation button states
-function updateNavigationButtons() {
-    if (typeof $ !== 'undefined' && $(".flipbook").turn("hasPage")) {
-        const currentPage = $(".flipbook").turn("page");
-        const totalPages = $(".flipbook").turn("pages");
-
-        // Disable/enable previous button
-        $("#prevPage").prop("disabled", currentPage <= 1);
-
-        // Disable/enable next button
-        $("#nextPage").prop("disabled", currentPage >= totalPages);
-    }
-}
-
-// Add this function to handle flipbook initialization
-function initializeFlipbook() {
-    const isMobile = window.innerWidth <= 768;
-    
-    if (typeof $ !== 'undefined' && $('.flipbook').length > 0) {
-        $(".flipbook").turn({
-            width: isMobile ? 350 : 1000,
-            height: isMobile ? 300 : 600,
-            autoCenter: true,
-            gradients: true,
-            elevation: 50,
-            display: isMobile ? 'single' : 'double'  // Key change for mobile
-        });
-
-        // Update button states on page turn
-        $(".flipbook").bind("turned", function (event, page, view) {
-            updateNavigationButtons();
-        });
-
-        // Initial button state
-        updateNavigationButtons();
-
-        // Previous page button
-        $("#prevPage").click(function () {
-            $(".flipbook").turn("previous");
-        });
-
-        // Next page button  
-        $("#nextPage").click(function () {
-            $(".flipbook").turn("next");
-        });
-    }
-}
-
 // Scroll animations
 function setupScrollAnimations() {
     const observerOptions = {
@@ -321,15 +245,6 @@ function handleWindowResize() {
         // Mobile adjustments
         clearInterval(slideInterval);
         startAutoSlide();
-    }
-
-    // Add flipbook re-initialization on resize
-    if (typeof $ !== 'undefined' && $('.flipbook').length > 0) {
-        const isMobile = window.innerWidth <= 768;
-        $(".flipbook").turn('destroy');
-        setTimeout(() => {
-            initializeFlipbook();
-        }, 100);
     }
 }
 

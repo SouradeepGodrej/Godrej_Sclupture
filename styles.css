@@ -435,50 +435,72 @@ body {
     box-sizing: border-box;
 }
 
+.flipbook-container.header-sticky {
+    padding-top: 120px;
+}
+
 /* Flipbook section */
 .flipbook {
     width: 1000px;
     height: 600px;
-    align-items: center;
-    justify-content: center;
     margin-bottom: 40px;
     display: block;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .flipbook .hard {
+    display: flex;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
     background: #c0392b !important;
     color: #fff;
     font-weight: bold;
     border: none;
+    text-align: center;
+    padding: 20px;
+    font-size: 1.5rem;
 }
 
 .flipbook .hard small {
     font-style: italic;
     font-weight: lighter;
     opacity: 0.7;
-    font-size: 14px;
+    font-size: 1rem;
+    margin-top: 10px;
 }
 
-.flipbook .page {
+.flipbook .page,
+.flipbook > div {
     background: white;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
     border: 1px solid rgba(0, 0, 0, 0.11);
+    padding: 20px;
+    box-sizing: border-box;
 }
 
-.page img {
-    width: 70%;
-    object-fit: cover;
-    margin: auto;
+.flipbook .page img,
+.flipbook > div img {
+    max-width: 70%;
+    max-height: 60%;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.flipbook .page small {
-    font-size: 14px;
-    margin-bottom: 10px;
+.flipbook .page small,
+.flipbook > div small {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+    margin-top: 10px;
 }
 
 .flipbook-controls {
@@ -504,19 +526,23 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(0, 75, 73, 0.2);
+    min-width: 120px;
+    justify-content: center;
 }
 
-.page-btn:hover {
+.page-btn:hover:not(:disabled) {
     background-color: #97BC62;
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0, 75, 73, 0.3);
 }
 
-.page-btn:disabled {
+.page-btn:disabled,
+.page-btn.disabled {
     background-color: #ccc;
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
+    opacity: 0.6;
 }
 
 .page-btn svg {

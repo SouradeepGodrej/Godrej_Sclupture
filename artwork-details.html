@@ -13,13 +13,13 @@
     <header class="header-artwork-details-page-main">
         <dev class="header-artwork-details-page">
             <div class="header-container">
-            <a href="index.html" class="logo">
-                <img src="images/logo/FINAL GODREJ LOGO 1(WHITE)-01 (2) copy.png" alt="Godrej Properties">
-            </a>
-        </div>
-        <div class="border-wrapper">
-            <span class="centered-border"></span>
-        </div>
+                <a href="index.html" class="logo">
+                    <img src="images/logo/FINAL GODREJ LOGO 1(WHITE)-01 (2) copy.png" alt="Godrej Properties">
+                </a>
+            </div>
+            <div class="border-wrapper">
+                <span class="centered-border"></span>
+            </div>
         </dev>
         <div class="detail-header">
             <button class="back-btn" id="backBtn" onclick="goBack()">
@@ -100,40 +100,146 @@
     <script src="jquery.js"></script>
     <script src="turn.js"></script>
     <script>
-        // Function to go back to main page
-        function goBack() {
-            window.history.back();
-            // Alternative: window.location.href = 'index.html';
-        }
-
-        
         $(document).ready(function () {
-            // Initialize flipbook
-            $(".flipbook").turn({
-                width: 1000,
-                height: 600,
-                autoCenter: true,
-                gradients: true,
-                elevation: 50
-            });
+            // Function to check if device is mobile
+            function isMobile() {
+                return window.innerWidth <= 768;
+            }
 
-            // Update button states on page turn
-            $(".flipbook").bind("turned", function (event, page, view) {
+            // Function to get flipbook dimensions based on screen size
+            function getFlipbookDimensions() {
+                const screenWidth = window.innerWidth;
+
+                if (screenWidth <= 480) {
+                    // Extra small screens
+                    return {
+                        width: Math.min(screenWidth - 40, 300),
+                        height: Math.min(screenWidth - 40, 300) * 0.7, // 3:2.1 ratio
+                        display: 'single'
+                    };
+                } else if (screenWidth <= 768) {
+                    // Mobile screens
+                    return {
+                        width: Math.min(screenWidth - 60, 400),
+                        height: Math.min(screenWidth - 60, 400) * 0.7,
+                        display: 'single'
+                    };
+                } else if (screenWidth <= 991) {
+                    // Tablet screens
+                    return {
+                        width: 600,
+                        height: 420,
+                        display: 'double'
+                    };
+                } else {
+                    // Desktop screens
+                    return {
+                        width: 1000,
+                        height: 600,
+                        display: 'double'
+                    };
+                }
+            }
+
+            // Initialize flipbook with responsive settings
+            function initializeFlipbook() {
+                const dimensions = getFlipbookDimensions();
+                const mobile = isMobile();
+
+                // Destroy existing flipbook if it exists
+                if ($(".flipbook").turn("is")) {
+                    $(".flipbook").turn("destroy");
+                }
+
+                // Initialize flipbook with responsive settings
+                $(".flipbook").turn({
+                    width: dimensions.width,
+                    height: dimensions.height,
+                    autoCenter: true,
+                    gradients: !mobile, // Disable gradients on mobile for better performance
+                    elevation: mobile ? 20 : 50, // Reduce elevation on mobile
+                    display: dimensions.display, // 'single' for mobile, 'double' for desktop
+                    when: {
+                        turned: function (event, page, view) {
+                            updateNavigationButtons();
+                        },
+                        missing: function (event, pages) {
+                            // Handle missing pages if needed
+                            console.log('Missing pages:', pages);
+                        }
+                    }
+                });
+
+                // Update navigation buttons initial state
                 updateNavigationButtons();
-            });
+            }
 
-            // Initial button state
-            updateNavigationButtons();
+            // Initialize flipbook on page load
+            initializeFlipbook();
+
+            // Reinitialize flipbook on window resize with debouncing
+            let resizeTimeout;
+            $(window).resize(function () {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(function () {
+                    const currentPage = $(".flipbook").turn("page");
+                    initializeFlipbook();
+                    // Restore current page after resize
+                    $(".flipbook").turn("page", currentPage);
+                }, 250);
+            });
 
             // Previous page button
             $("#prevPage").click(function () {
-                $(".flipbook").turn("previous");
+                if (!$(this).prop("disabled")) {
+                    $(".flipbook").turn("previous");
+                }
             });
 
             // Next page button  
             $("#nextPage").click(function () {
-                $(".flipbook").turn("next");
+                if (!$(this).prop("disabled")) {
+                    $(".flipbook").turn("next");
+                }
             });
+
+            // Touch swipe support for mobile
+            let touchStartX = 0;
+            let touchStartY = 0;
+            let touchEndX = 0;
+            let touchEndY = 0;
+
+            $(".flipbook").on('touchstart', function (e) {
+                touchStartX = e.originalEvent.touches[0].clientX;
+                touchStartY = e.originalEvent.touches[0].clientY;
+            });
+
+            $(".flipbook").on('touchend', function (e) {
+                touchEndX = e.originalEvent.changedTouches[0].clientX;
+                touchEndY = e.originalEvent.changedTouches[0].clientY;
+                handleSwipe();
+            });
+
+            function handleSwipe() {
+                const swipeThreshold = 50;
+                const diffX = touchStartX - touchEndX;
+                const diffY = Math.abs(touchStartY - touchEndY);
+
+                // Only handle horizontal swipes (ignore vertical scrolling)
+                if (Math.abs(diffX) > swipeThreshold && diffY < 100) {
+                    if (diffX > 0) {
+                        // Swipe left - next page
+                        if (!$("#nextPage").prop("disabled")) {
+                            $(".flipbook").turn("next");
+                        }
+                    } else {
+                        // Swipe right - previous page
+                        if (!$("#prevPage").prop("disabled")) {
+                            $(".flipbook").turn("previous");
+                        }
+                    }
+                }
+            }
 
             // Sticky header functionality
             const header = $('.header-artwork-details-page');
@@ -154,11 +260,38 @@
                     flipbookContainer.removeClass('header-sticky');
                 }
             });
+
+            // Keyboard navigation
+            $(document).keydown(function (e) {
+                // Only handle keyboard navigation if flipbook is visible and focused
+                if ($(".flipbook").is(":visible")) {
+                    switch (e.which) {
+                        case 37: // Left arrow
+                            e.preventDefault();
+                            if (!$("#prevPage").prop("disabled")) {
+                                $(".flipbook").turn("previous");
+                            }
+                            break;
+                        case 39: // Right arrow  
+                            e.preventDefault();
+                            if (!$("#nextPage").prop("disabled")) {
+                                $(".flipbook").turn("next");
+                            }
+                            break;
+                        case 32: // Spacebar
+                            e.preventDefault();
+                            if (!$("#nextPage").prop("disabled")) {
+                                $(".flipbook").turn("next");
+                            }
+                            break;
+                    }
+                }
+            });
         });
 
         // Update button states based on current page
         function updateNavigationButtons() {
-            if ($(".flipbook").turn("hasPage")) {
+            if ($(".flipbook").turn("is")) {
                 const currentPage = $(".flipbook").turn("page");
                 const totalPages = $(".flipbook").turn("pages");
 
@@ -167,7 +300,26 @@
 
                 // Disable/enable next button
                 $("#nextPage").prop("disabled", currentPage >= totalPages);
+
+                // Update button appearance
+                if (currentPage <= 1) {
+                    $("#prevPage").addClass("disabled");
+                } else {
+                    $("#prevPage").removeClass("disabled");
+                }
+
+                if (currentPage >= totalPages) {
+                    $("#nextPage").addClass("disabled");
+                } else {
+                    $("#nextPage").removeClass("disabled");
+                }
             }
+        }
+
+        // Function to go back to main page
+        function goBack() {
+            window.history.back();
+            // Alternative: window.location.href = 'index.html';
         }
     </script>
 </body>
