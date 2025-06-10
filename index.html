@@ -144,10 +144,6 @@
         </section>
     </main>
 
-    <!-- Artworks Detail Page -->
-    <!-- <div class="artwork-details-page" id="artworkDetailsPage">
-    </div> -->
-
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
@@ -171,50 +167,6 @@
     <script src="script.js"></script>
     <script src="jquery.js"></script>
     <script src="turn.js"></script>
-    <script>
-        $(document).ready(function () {
-            // Initialize flipbook
-            $(".flipbook").turn({
-                width: 1000,
-                height: 600,
-                autoCenter: true,
-                gradients: true,
-                elevation: 50
-            });
-
-            // Update button states on page turn
-            $(".flipbook").bind("turned", function (event, page, view) {
-                updateNavigationButtons();
-            });
-
-            // Initial button state
-            updateNavigationButtons();
-
-            // Previous page button
-            $("#prevPage").click(function () {
-                $(".flipbook").turn("previous");
-            });
-
-            // Next page button  
-            $("#nextPage").click(function () {
-                $(".flipbook").turn("next");
-            });
-        });
-
-        // Update button states based on current page
-        function updateNavigationButtons() {
-            if ($(".flipbook").turn("hasPage")) {
-                const currentPage = $(".flipbook").turn("page");
-                const totalPages = $(".flipbook").turn("pages");
-
-                // Disable/enable previous button
-                $("#prevPage").prop("disabled", currentPage <= 1);
-
-                // Disable/enable next button
-                $("#nextPage").prop("disabled", currentPage >= totalPages);
-            }
-        }
-    </script>
     <script>
         window.addEventListener('DOMContentLoaded', () => {
             setupArtworkSlider();
