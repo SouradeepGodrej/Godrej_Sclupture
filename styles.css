@@ -733,7 +733,6 @@ footer-text-2 p:hover {
         background: linear-gradient(to right, transparent, rgba(128, 128, 128, 0.8));
     }
 
-
     .hero-slider {
         height: 70vh;
         min-height: 600px;
@@ -916,6 +915,10 @@ footer-text-2 p:hover {
         width: 95%;
         max-width: 500px;
         height: 300px;
+    }
+
+    .flipbook .page {
+        width: 100% !important;
     }
 
     .flipbook-controls {
