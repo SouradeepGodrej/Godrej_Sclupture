@@ -16,6 +16,11 @@ const mainContent = document.getElementById('mainContent');
 const backBtn = document.getElementById('backBtn');
 const qrPage = document.getElementById('qrPage');
 
+// In your script.js file, add:
+document.getElementById('viewAllArtworks').addEventListener('click', function() {
+    window.location.href = 'artwork-details.html';
+});
+
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
     initializeSlider();
