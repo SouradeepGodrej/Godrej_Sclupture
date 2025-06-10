@@ -6,108 +6,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Artwork Details - Godrej Properties</title>
     <link rel="stylesheet" href="styles.css">
-    <style>
-        /* Additional styles specific to artwork details page */
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-        }
-        
-        .artwork-details-page {
-            display: block !important;
-            min-height: 100vh;
-            background: #f5f5f5;
-        }
-        
-        .detail-header {
-            background: #fff;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .back-btn {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: none;
-            border: none;
-            font-size: 16px;
-            cursor: pointer;
-            color: #333;
-            padding: 10px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-        
-        .back-btn:hover {
-            background-color: #f0f0f0;
-        }
-        
-        .flipbook-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 40px 20px;
-        }
-        
-        .flipbook {
-            margin-bottom: 30px;
-        }
-        
-        .flipbook-controls {
-            display: flex;
-            gap: 20px;
-        }
-        
-        .page-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 24px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-        
-        .page-btn:hover {
-            background: #0056b3;
-            transform: translateY(-2px);
-        }
-        
-        .page-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-    </style>
 </head>
 
 <body>
     <!-- Header (optional - you can include the same header as main page) -->
-    <header class="header">
-        <div class="header-container">
+    <header class="header-artwork-details-page-main">
+        <dev class="header-artwork-details-page">
+            <div class="header-container">
             <a href="index.html" class="logo">
                 <img src="images/logo/FINAL GODREJ LOGO 1(WHITE)-01 (2) copy.png" alt="Godrej Properties">
             </a>
         </div>
-    </header>
-
-    <!-- Artwork Details Page Content -->
-    <div class="artwork-details-page">
-        <header class="detail-header">
+        <div class="border-wrapper">
+            <span class="centered-border"></span>
+        </div>
+        </dev>
+        <div class="detail-header">
             <button class="back-btn" id="backBtn" onclick="goBack()">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="15,18 9,12 15,6"></polyline>
                 </svg>
                 Back to Gallery
             </button>
-        </header>
-
+        </div>
+    </header>
+    <!-- Artwork Details Page Content -->
+    <div class="artwork-details-page">
         <div class="flipbook-container">
             <div class="flipbook">
                 <div class="hard">Pokemon Gallery <small>~ Avni jain</small></div>
@@ -139,7 +63,6 @@
                 <div class="hard"></div>
                 <div class="hard">Thank You <small>~ HankTheTank</small></div>
             </div>
-
             <div class="flipbook-controls">
                 <button class="page-btn prev-btn" id="prevPage">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -209,6 +132,26 @@
             // Next page button  
             $("#nextPage").click(function () {
                 $(".flipbook").turn("next");
+            });
+
+            // Sticky header functionality
+            const header = $('.header-artwork-details-page');
+            const detailHeader = $('.detail-header');
+            const flipbookContainer = $('.flipbook-container');
+            const headerHeight = header.outerHeight();
+
+            $(window).scroll(function () {
+                const scrollTop = $(this).scrollTop();
+
+                // When user scrolls past the main header
+                if (scrollTop > headerHeight) {
+                    detailHeader.addClass('sticky');
+                    flipbookContainer.addClass('header-sticky');
+                } else {
+                    // When user scrolls back up to see the main header
+                    detailHeader.removeClass('sticky');
+                    flipbookContainer.removeClass('header-sticky');
+                }
             });
         });
 

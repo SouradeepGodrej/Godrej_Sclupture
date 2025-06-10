@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
     setupArtworkSlider();
     setupScrollAnimations();
-    setupSearchFunctionality();
 });
 
 // Slider functionality
@@ -213,99 +212,6 @@ function hideQRPage() {
         qrPage.classList.remove('active');
         document.body.style.overflow = 'auto';
     }
-}
-
-// Search functionality
-function setupSearchFunctionality() {
-    const searchIcon = document.querySelector('.search-icon');
-    
-    // Create search overlay
-    const searchOverlay = document.createElement('div');
-    searchOverlay.className = 'search-overlay';
-    searchOverlay.innerHTML = `
-        <div class="search-container">
-            <input type="text" class="search-input" placeholder="Search artworks...">
-            <button class="search-close">&times;</button>
-        </div>
-        <div class="search-results"></div>
-    `;
-    document.body.appendChild(searchOverlay);
-    
-    // Add search overlay styles
-    const searchStyles = document.createElement('style');
-    searchStyles.textContent = `
-        .search-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 75, 73, 0.95);
-            z-index: 1003;
-            display: none;
-            padding: 80px 20px 20px;
-        }
-        .search-overlay.active {
-            display: block;
-        }
-        .search-container {
-            max-width: 600px;
-            margin: 0 auto;
-            position: relative;
-        }
-        .search-input {
-            width: 100%;
-            padding: 20px;
-            font-size: 1.2rem;
-            border: none;
-            border-radius: 10px;
-            outline: none;
-        }
-        .search-close {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            font-size: 2rem;
-            color: #666;
-            cursor: pointer;
-        }
-        .search-results {
-            max-width: 600px;
-            margin: 20px auto 0;
-            color: white;
-        }
-    `;
-    document.head.appendChild(searchStyles);
-    
-    const searchInput = searchOverlay.querySelector('.search-input');
-    const searchClose = searchOverlay.querySelector('.search-close');
-    const searchResults = searchOverlay.querySelector('.search-results');
-    
-    // Search functionality (demo - you can enhance this)
-    searchInput.addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase();
-        if (query.length > 2) {
-            // Mock search results
-            searchResults.innerHTML = `
-                <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin: 10px 0;">
-                    <h3>Contemporary Vision</h3>
-                    <p>Modern artistic expression matching "${query}"</p>
-                </div>
-            `;
-        } else {
-            searchResults.innerHTML = '';
-        }
-    });
-    
-    searchClose.addEventListener('click', () => {
-        searchOverlay.classList.remove('active');
-        document.body.style.overflow = 'auto';
-        searchInput.value = '';
-        searchResults.innerHTML = '';
-    });
 }
 
 // Scroll animations
