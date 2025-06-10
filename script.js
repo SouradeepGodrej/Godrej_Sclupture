@@ -3,23 +3,23 @@ let currentSlide = 0;
 let slideInterval;
 const slides = document.querySelectorAll('.slide');
 const dots = document.querySelectorAll('.dot');
-let flipbook;
+// let flipbook;
 
 // DOM Elements
 const menuToggle = document.querySelector('.menu-toggle');
 const sidePanel = document.getElementById('sidePanel');
 const closePanel = document.getElementById('closePanel');
 const overlay = document.getElementById('overlay');
-const viewAllBtn = document.getElementById('viewAllArtworks');
-const artworkDetailsPage = document.getElementById('artworkDetailsPage');
+// const viewAllBtn = document.getElementById('viewAllArtworks');
+// const artworkDetailsPage = document.getElementById('artworkDetailsPage');
 const mainContent = document.getElementById('mainContent');
-const backBtn = document.getElementById('backBtn');
+// const backBtn = document.getElementById('backBtn');
 const qrPage = document.getElementById('qrPage');
 
 // In your script.js file, add:
-document.getElementById('viewAllArtworks').addEventListener('click', function() {
-    window.location.href = 'artwork-details.html';
-});
+// document.getElementById('viewAllArtworks').addEventListener('click', function() {
+//     window.location.href = 'artwork-details.html';
+// });
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
@@ -73,13 +73,21 @@ function setupEventListeners() {
     menuToggle.addEventListener('click', openSidePanel);
     closePanel.addEventListener('click', closeSidePanel);
     overlay.addEventListener('click', closeSidePanel);
+
+    // ADD THIS: New artwork details navigation
+    const viewAllBtn = document.getElementById('viewAllArtworks');
+    if (viewAllBtn) {
+        viewAllBtn.addEventListener('click', function() {
+            window.location.href = 'artwork-details.html';
+        });
+    }
     
     // Artwork details navigation
     viewAllBtn.addEventListener('click', showArtworkDetails);
     backBtn.addEventListener('click', showMainContent);
     
     // Individual artwork items click handlers
-    setupArtworkItemClickHandlers();
+    // setupArtworkItemClickHandlers();
     
     // QR page triggers
     setupQRPageTriggers();
@@ -88,27 +96,27 @@ function setupEventListeners() {
     window.addEventListener('resize', handleWindowResize);
 }
 
-function setupArtworkItemClickHandlers() {
-    const artworkItems = document.querySelectorAll('.artwork-item');
-    artworkItems.forEach((item, index) => {
-        item.addEventListener('click', () => {
-            showArtworkDetails();
-            // Scroll to specific artwork detail based on index
-            setTimeout(() => {
-                const artworkDetails = document.querySelectorAll('.artwork-detail');
-                if (artworkDetails[index]) {
-                    artworkDetails[index].scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            }, 100);
-        });
+// function setupArtworkItemClickHandlers() {
+//     const artworkItems = document.querySelectorAll('.artwork-item');
+//     artworkItems.forEach((item, index) => {
+//         item.addEventListener('click', () => {
+//             showArtworkDetails();
+//             // Scroll to specific artwork detail based on index
+//             setTimeout(() => {
+//                 const artworkDetails = document.querySelectorAll('.artwork-detail');
+//                 if (artworkDetails[index]) {
+//                     artworkDetails[index].scrollIntoView({
+//                         behavior: 'smooth',
+//                         block: 'start'
+//                     });
+//                 }
+//             }, 100);
+//         });
         
-        // Add hover effect cursor
-        item.style.cursor = 'pointer';
-    });
-}
+//         // Add hover effect cursor
+//         item.style.cursor = 'pointer';
+//     });
+// }
 
 function setupQRPageTriggers() {
     // Add QR trigger to search icon
@@ -196,47 +204,47 @@ function setupArtworkSlider() {
 }
 
 // Page navigation
-function showArtworkDetails() {
-    mainContent.style.display = 'none';
-    artworkDetailsPage.classList.add('active');
+// function showArtworkDetails() {
+//     mainContent.style.display = 'none';
+//     artworkDetailsPage.classList.add('active');
     
-    // Pause slider when viewing details
-    clearInterval(slideInterval);
+//     // Pause slider when viewing details
+//     clearInterval(slideInterval);
     
-    // Scroll to top of artwork details
-    window.scrollTo(0, 0);
+//     // Scroll to top of artwork details
+//     window.scrollTo(0, 0);
     
-    // Add fade-in animation to artwork details
-    const artworkDetails = document.querySelectorAll('.artwork-detail');
-    artworkDetails.forEach((detail, index) => {
-        detail.style.opacity = '0';
-        detail.style.transform = 'translateY(30px)';
-        setTimeout(() => {
-            detail.style.transition = 'all 0.6s ease';
-            detail.style.opacity = '1';
-            detail.style.transform = 'translateY(0)';
-        }, index * 200);
-    });
-}
+//     // Add fade-in animation to artwork details
+//     const artworkDetails = document.querySelectorAll('.artwork-detail');
+//     artworkDetails.forEach((detail, index) => {
+//         detail.style.opacity = '0';
+//         detail.style.transform = 'translateY(30px)';
+//         setTimeout(() => {
+//             detail.style.transition = 'all 0.6s ease';
+//             detail.style.opacity = '1';
+//             detail.style.transform = 'translateY(0)';
+//         }, index * 200);
+//     });
+// }
 
-function showMainContent() {
-    artworkDetailsPage.classList.remove('active');
-    mainContent.style.display = 'block';
+// function showMainContent() {
+//     artworkDetailsPage.classList.remove('active');
+//     mainContent.style.display = 'block';
     
-    // Resume slider
-    startAutoSlide();
+//     // Resume slider
+//     startAutoSlide();
     
-    // Scroll to artworks section
-    setTimeout(() => {
-        const artworksSection = document.querySelector('.artworks-section');
-        if (artworksSection) {
-            artworksSection.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    }, 100);
-}
+//     // Scroll to artworks section
+//     setTimeout(() => {
+//         const artworksSection = document.querySelector('.artworks-section');
+//         if (artworksSection) {
+//             artworksSection.scrollIntoView({
+//                 behavior: 'smooth',
+//                 block: 'start'
+//             });
+//         }
+//     }, 100);
+// }
 
 function showQRPage() {
     qrPage.classList.add('active');
@@ -280,51 +288,51 @@ function hideQRPage() {
 }
 
 //flip book function
-$(document).ready(function() {
-    flipbook = $(".flipbook").turn({
-        width: 1000,
-        height: 600,
-        autoCenter: true
-    });
+// $(document).ready(function() {
+//     flipbook = $(".flipbook").turn({
+//         width: 1000,
+//         height: 600,
+//         autoCenter: true
+//     });
     
-    // Update button states on page turn
-    flipbook.bind("turned", function(event, page, pageObject) {
-        updateNavigationButtons();
-    });
+//     // Update button states on page turn
+//     flipbook.bind("turned", function(event, page, pageObject) {
+//         updateNavigationButtons();
+//     });
     
-    // Initial button state
-    updateNavigationButtons();
-});
+//     // Initial button state
+//     updateNavigationButtons();
+// });
 
 // Previous page button
-$("#prevPage").click(function() {
-    $(".flipbook").turn("previous");
-});
+// $("#prevPage").click(function() {
+//     $(".flipbook").turn("previous");
+// });
 
 // Next page button  
-$("#nextPage").click(function() {
-    $(".flipbook").turn("next");
-});
+// $("#nextPage").click(function() {
+//     $(".flipbook").turn("next");
+// });
 
 // Update button states based on current page
-function updateNavigationButtons() {
-    const currentPage = $(".flipbook").turn("page");
-    const totalPages = $(".flipbook").turn("pages");
+// function updateNavigationButtons() {
+//     const currentPage = $(".flipbook").turn("page");
+//     const totalPages = $(".flipbook").turn("pages");
     
-    // Disable/enable previous button
-    if (currentPage <= 1) {
-        $("#prevPage").prop("disabled", true);
-    } else {
-        $("#prevPage").prop("disabled", false);
-    }
+//     // Disable/enable previous button
+//     if (currentPage <= 1) {
+//         $("#prevPage").prop("disabled", true);
+//     } else {
+//         $("#prevPage").prop("disabled", false);
+//     }
     
-    // Disable/enable next button
-    if (currentPage >= totalPages) {
-        $("#nextPage").prop("disabled", true);
-    } else {
-        $("#nextPage").prop("disabled", false);
-    }
-}
+//     // Disable/enable next button
+//     if (currentPage >= totalPages) {
+//         $("#nextPage").prop("disabled", true);
+//     } else {
+//         $("#nextPage").prop("disabled", false);
+//     }
+// }
 
 // Search functionality
 function setupSearchFunctionality() {
@@ -471,6 +479,7 @@ document.addEventListener('click', (e) => {
 });
 
 // Keyboard navigation
+// In the keyboard navigation section, update this:
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         if (sidePanel.classList.contains('active')) {
@@ -483,21 +492,19 @@ document.addEventListener('keydown', (e) => {
         }
     }
     
-    // Arrow keys for slider (only when not in details page)
-    if (!artworkDetailsPage.classList.contains('active')) {
-        if (e.key === 'ArrowLeft') {
-            const prevIndex = currentSlide === 0 ? slides.length - 1 : currentSlide - 1;
-            goToSlide(prevIndex);
-            resetAutoSlide();
-        } else if (e.key === 'ArrowRight') {
-            const nextIndex = (currentSlide + 1) % slides.length;
-            goToSlide(nextIndex);
-            resetAutoSlide();
-        }
+    // Arrow keys for slider - remove the artworkDetailsPage check
+    if (e.key === 'ArrowLeft') {
+        const prevIndex = currentSlide === 0 ? slides.length - 1 : currentSlide - 1;
+        goToSlide(prevIndex);
+        resetAutoSlide();
+    } else if (e.key === 'ArrowRight') {
+        const nextIndex = (currentSlide + 1) % slides.length;
+        goToSlide(nextIndex);
+        resetAutoSlide();
     }
     
-    // Spacebar to pause/resume slider
-    if (e.key === ' ' && !artworkDetailsPage.classList.contains('active')) {
+    // Spacebar to pause/resume slider - remove the artworkDetailsPage check
+    if (e.key === ' ') {
         e.preventDefault();
         if (slideInterval) {
             clearInterval(slideInterval);
@@ -529,7 +536,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
         clearInterval(slideInterval);
-    } else if (!artworkDetailsPage.classList.contains('active')) {
+    } else {
+        // Remove the artworkDetailsPage check
         startAutoSlide();
     }
 });
@@ -575,8 +583,8 @@ function handleSwipe() {
     const diff = touchStartX - touchEndX;
     
     if (Math.abs(diff) > swipeThreshold) {
-        if (!artworkDetailsPage.classList.contains('active') && 
-            !sidePanel.classList.contains('active') &&
+        // Remove the artworkDetailsPage check
+        if (!sidePanel.classList.contains('active') &&
             !qrPage.classList.contains('active')) {
             if (diff > 0) {
                 // Swipe left - next slide

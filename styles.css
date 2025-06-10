@@ -325,7 +325,7 @@ body {
     font-size: 1.1rem;
     cursor: pointer;
     transition: all 0.3s ease;
-    min-width: 160px;
+    min-width: 60px;
     text-align: center;
 }
 
