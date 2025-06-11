@@ -19,23 +19,35 @@
   <script src="Pdf-Flipbook-master-main/js/flipbook.min.js"></script>
   <script type="text/javascript">
     $(document).ready(function () {
-      $(".book-1").flipBook({
-        // Layout Setting
-        pdfUrl: 'Pdf-Flipbook-master-main/pdf/Art at the trees-2.pdf',
+      // Configuration object for each book
+      const bookConfigs = {
+        '.book-1': {
+          pdfUrl: 'Pdf-Flipbook-master-main/pdf/Art at the trees-2.pdf'
+        },
+        '.book-2': {
+          pdfUrl: 'Pdf-Flipbook-master-main/pdf/First-107PG-7830KB.pdf'
+        },
+        '.book-3': {
+          pdfUrl: 'Pdf-Flipbook-master-main/pdf/Second-3PG-74KB.pdf'
+        },
+        '.book-4': {
+          pdfUrl: 'Pdf-Flipbook-master-main/pdf/Third-8PG-330KB.pdf'
+        }
+      };
+
+      // Common configuration for all books
+      const commonConfig = {
         lightBox: true,
         layout: 3,
         currentPage: { vAlign: "bottom", hAlign: "left" },
-        // BTN SETTING
         btnShare: { enabled: false },
-        btnPrint: {
-          hideOnMobile: true
-        },
+        btnPrint: { hideOnMobile: true },
         btnDownloadPages: {
           enabled: true,
           title: "Download pages",
           icon: "fa-download",
           icon2: "file_download",
-          url: "Pdf-Flipbook-master-main/images/pdf.rar", // need the pdf .rar link
+          url: "Pdf-Flipbook-master-main/images/pdf.rar",
           name: "allPages.zip",
           hideOnMobile: false
         },
@@ -46,211 +58,29 @@
         sideBtnRadius: 60,
         btnSound: { vAlign: "top", hAlign: "left" },
         btnAutoplay: { vAlign: "top", hAlign: "left" },
-        // SHARING
         btnShare: {
           enabled: true,
           title: "Share",
           icon: "fa-share-alt"
         },
-        facebook: {
-          enabled: true,
-          url: "facebook.com"
-        },
-        google_plus: {
-          enabled: true,
-          url: "google.com"
-        },
+        facebook: { enabled: true, url: "facebook.com" },
+        google_plus: { enabled: true, url: "google.com" },
         email: {
           enabled: true,
           url: "email.com",
           title: "PDF KPK",
           description: "email.com"
         },
-        twitter: {
-          enabled: true,
-          url: "twitter.com"
-        },
-        pinterest: {
-          enabled: true,
-          url: "pinsterest.com"
-        }
+        twitter: { enabled: true, url: "twitter.com" },
+        pinterest: { enabled: true, url: "pinsterest.com" }
+      };
+
+      // Initialize flipbook for each book
+      Object.keys(bookConfigs).forEach(selector => {
+        const config = { ...commonConfig, ...bookConfigs[selector] };
+        $(selector).flipBook(config);
       });
-    })
-    $(document).ready(function () {
-      $(".book-2").flipBook({
-        // Layout Setting
-        pdfUrl: 'Pdf-Flipbook-master-main/pdf/First-107PG-7830KB.pdf',
-        lightBox: true,
-        layout: 3,
-        currentPage: { vAlign: "bottom", hAlign: "left" },
-        // BTN SETTING
-        btnShare: { enabled: false },
-        btnPrint: {
-          hideOnMobile: true
-        },
-        btnDownloadPages: {
-          enabled: true,
-          title: "Download pages",
-          icon: "fa-download",
-          icon2: "file_download",
-          url: "Pdf-Flipbook-master-main/images/pdf.rar", // need the pdf .rar link
-          name: "allPages.zip",
-          hideOnMobile: false
-        },
-        btnColor: 'rgb(255,120,60)',
-        sideBtnColor: 'rgb(255,120,60)',
-        sideBtnSize: 60,
-        sideBtnBackground: "rgba(0,0,0,.7)",
-        sideBtnRadius: 60,
-        btnSound: { vAlign: "top", hAlign: "left" },
-        btnAutoplay: { vAlign: "top", hAlign: "left" },
-        // SHARING
-        btnShare: {
-          enabled: true,
-          title: "Share",
-          icon: "fa-share-alt"
-        },
-        facebook: {
-          enabled: true,
-          url: "facebook.com"
-        },
-        google_plus: {
-          enabled: true,
-          url: "google.com"
-        },
-        email: {
-          enabled: true,
-          url: "email.com",
-          title: "PDF KPK",
-          description: "email.com"
-        },
-        twitter: {
-          enabled: true,
-          url: "twitter.com"
-        },
-        pinterest: {
-          enabled: true,
-          url: "pinsterest.com"
-        }
-      });
-    })
-    $(document).ready(function () {
-      $(".book-3").flipBook({
-        // Layout Setting
-        pdfUrl: 'Pdf-Flipbook-master-main/pdf/Second-3PG-74KB.pdf',
-        lightBox: true,
-        layout: 3,
-        currentPage: { vAlign: "bottom", hAlign: "left" },
-        // BTN SETTING
-        btnShare: { enabled: false },
-        btnPrint: {
-          hideOnMobile: true
-        },
-        btnDownloadPages: {
-          enabled: true,
-          title: "Download pages",
-          icon: "fa-download",
-          icon2: "file_download",
-          url: "Pdf-Flipbook-master-main/images/pdf.rar", // need the pdf .rar link
-          name: "allPages.zip",
-          hideOnMobile: false
-        },
-        btnColor: 'rgb(255,120,60)',
-        sideBtnColor: 'rgb(255,120,60)',
-        sideBtnSize: 60,
-        sideBtnBackground: "rgba(0,0,0,.7)",
-        sideBtnRadius: 60,
-        btnSound: { vAlign: "top", hAlign: "left" },
-        btnAutoplay: { vAlign: "top", hAlign: "left" },
-        // SHARING
-        btnShare: {
-          enabled: true,
-          title: "Share",
-          icon: "fa-share-alt"
-        },
-        facebook: {
-          enabled: true,
-          url: "facebook.com"
-        },
-        google_plus: {
-          enabled: true,
-          url: "google.com"
-        },
-        email: {
-          enabled: true,
-          url: "email.com",
-          title: "PDF KPK",
-          description: "email.com"
-        },
-        twitter: {
-          enabled: true,
-          url: "twitter.com"
-        },
-        pinterest: {
-          enabled: true,
-          url: "pinsterest.com"
-        }
-      });
-    })
-    $(document).ready(function () {
-      $(".book-4").flipBook({
-        // Layout Setting
-        pdfUrl: 'Pdf-Flipbook-master-main/pdf/Third-8PG-330KB.pdf',
-        lightBox: true,
-        layout: 3,
-        currentPage: { vAlign: "bottom", hAlign: "left" },
-        // BTN SETTING
-        btnShare: { enabled: false },
-        btnPrint: {
-          hideOnMobile: true
-        },
-        btnDownloadPages: {
-          enabled: true,
-          title: "Download pages",
-          icon: "fa-download",
-          icon2: "file_download",
-          url: "Pdf-Flipbook-master-main/images/pdf.rar", // need the pdf .rar link
-          name: "allPages.zip",
-          hideOnMobile: false
-        },
-        btnColor: 'rgb(255,120,60)',
-        sideBtnColor: 'rgb(255,120,60)',
-        sideBtnSize: 60,
-        sideBtnBackground: "rgba(0,0,0,.7)",
-        sideBtnRadius: 60,
-        btnSound: { vAlign: "top", hAlign: "left" },
-        btnAutoplay: { vAlign: "top", hAlign: "left" },
-        // SHARING
-        btnShare: {
-          enabled: true,
-          title: "Share",
-          icon: "fa-share-alt"
-        },
-        facebook: {
-          enabled: true,
-          url: "facebook.com"
-        },
-        google_plus: {
-          enabled: true,
-          url: "google.com"
-        },
-        email: {
-          enabled: true,
-          url: "email.com",
-          title: "PDF KPK",
-          description: "email.com"
-        },
-        twitter: {
-          enabled: true,
-          url: "twitter.com"
-        },
-        pinterest: {
-          enabled: true,
-          url: "pinsterest.com"
-        }
-      });
-    })
-    
+    });
   </script>
 
   <style type="text/css">
