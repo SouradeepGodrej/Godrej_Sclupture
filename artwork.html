@@ -21,6 +21,64 @@
     $(document).ready(function () {
       $(".book-1").flipBook({
         // Layout Setting
+        pdfUrl: 'Pdf-Flipbook-master-main/pdf/Art at the trees-2.pdf',
+        lightBox: true,
+        layout: 3,
+        currentPage: { vAlign: "bottom", hAlign: "left" },
+        // BTN SETTING
+        btnShare: { enabled: false },
+        btnPrint: {
+          hideOnMobile: true
+        },
+        btnDownloadPages: {
+          enabled: true,
+          title: "Download pages",
+          icon: "fa-download",
+          icon2: "file_download",
+          url: "Pdf-Flipbook-master-main/images/pdf.rar", // need the pdf .rar link
+          name: "allPages.zip",
+          hideOnMobile: false
+        },
+        btnColor: 'rgb(255,120,60)',
+        sideBtnColor: 'rgb(255,120,60)',
+        sideBtnSize: 60,
+        sideBtnBackground: "rgba(0,0,0,.7)",
+        sideBtnRadius: 60,
+        btnSound: { vAlign: "top", hAlign: "left" },
+        btnAutoplay: { vAlign: "top", hAlign: "left" },
+        // SHARING
+        btnShare: {
+          enabled: true,
+          title: "Share",
+          icon: "fa-share-alt"
+        },
+        facebook: {
+          enabled: true,
+          url: "facebook.com"
+        },
+        google_plus: {
+          enabled: true,
+          url: "google.com"
+        },
+        email: {
+          enabled: true,
+          url: "email.com",
+          title: "PDF KPK",
+          description: "email.com"
+        },
+        twitter: {
+          enabled: true,
+          url: "twitter.com"
+        },
+        pinterest: {
+          enabled: true,
+          url: "pinsterest.com"
+        }
+      });
+    })
+    $(document).ready(function () {
+      $(".book-2").flipBook({
+        // Layout Setting
         pdfUrl: 'Pdf-Flipbook-master-main/pdf/First-107PG-7830KB.pdf',
         lightBox: true,
         layout: 3,
@@ -76,6 +134,123 @@
         }
       });
     })
+    $(document).ready(function () {
+      $(".book-3").flipBook({
+        // Layout Setting
+        pdfUrl: 'Pdf-Flipbook-master-main/pdf/Second-3PG-74KB.pdf',
+        lightBox: true,
+        layout: 3,
+        currentPage: { vAlign: "bottom", hAlign: "left" },
+        // BTN SETTING
+        btnShare: { enabled: false },
+        btnPrint: {
+          hideOnMobile: true
+        },
+        btnDownloadPages: {
+          enabled: true,
+          title: "Download pages",
+          icon: "fa-download",
+          icon2: "file_download",
+          url: "Pdf-Flipbook-master-main/images/pdf.rar", // need the pdf .rar link
+          name: "allPages.zip",
+          hideOnMobile: false
+        },
+        btnColor: 'rgb(255,120,60)',
+        sideBtnColor: 'rgb(255,120,60)',
+        sideBtnSize: 60,
+        sideBtnBackground: "rgba(0,0,0,.7)",
+        sideBtnRadius: 60,
+        btnSound: { vAlign: "top", hAlign: "left" },
+        btnAutoplay: { vAlign: "top", hAlign: "left" },
+        // SHARING
+        btnShare: {
+          enabled: true,
+          title: "Share",
+          icon: "fa-share-alt"
+        },
+        facebook: {
+          enabled: true,
+          url: "facebook.com"
+        },
+        google_plus: {
+          enabled: true,
+          url: "google.com"
+        },
+        email: {
+          enabled: true,
+          url: "email.com",
+          title: "PDF KPK",
+          description: "email.com"
+        },
+        twitter: {
+          enabled: true,
+          url: "twitter.com"
+        },
+        pinterest: {
+          enabled: true,
+          url: "pinsterest.com"
+        }
+      });
+    })
+    $(document).ready(function () {
+      $(".book-4").flipBook({
+        // Layout Setting
+        pdfUrl: 'Pdf-Flipbook-master-main/pdf/Third-8PG-330KB.pdf',
+        lightBox: true,
+        layout: 3,
+        currentPage: { vAlign: "bottom", hAlign: "left" },
+        // BTN SETTING
+        btnShare: { enabled: false },
+        btnPrint: {
+          hideOnMobile: true
+        },
+        btnDownloadPages: {
+          enabled: true,
+          title: "Download pages",
+          icon: "fa-download",
+          icon2: "file_download",
+          url: "Pdf-Flipbook-master-main/images/pdf.rar", // need the pdf .rar link
+          name: "allPages.zip",
+          hideOnMobile: false
+        },
+        btnColor: 'rgb(255,120,60)',
+        sideBtnColor: 'rgb(255,120,60)',
+        sideBtnSize: 60,
+        sideBtnBackground: "rgba(0,0,0,.7)",
+        sideBtnRadius: 60,
+        btnSound: { vAlign: "top", hAlign: "left" },
+        btnAutoplay: { vAlign: "top", hAlign: "left" },
+        // SHARING
+        btnShare: {
+          enabled: true,
+          title: "Share",
+          icon: "fa-share-alt"
+        },
+        facebook: {
+          enabled: true,
+          url: "facebook.com"
+        },
+        google_plus: {
+          enabled: true,
+          url: "google.com"
+        },
+        email: {
+          enabled: true,
+          url: "email.com",
+          title: "PDF KPK",
+          description: "email.com"
+        },
+        twitter: {
+          enabled: true,
+          url: "twitter.com"
+        },
+        pinterest: {
+          enabled: true,
+          url: "pinsterest.com"
+        }
+      });
+    })
+    
   </script>
 
   <style type="text/css">
@@ -171,6 +346,21 @@
         <div class="thumb book-1">
           <a id="read">
             <img src="Pdf-Flipbook-master-main/images/book1/1.png">
+          </a>
+        </div>
+        <div class="thumb book-2">
+          <a id="read">
+            <img src="Pdf-Flipbook-master-main/images/book3/1.png">
+          </a>
+        </div>
+        <div class="thumb book-3">
+          <a id="read">
+            <img src="Pdf-Flipbook-master-main/images/book4/1.png">
+          </a>
+        </div>
+        <div class="thumb book-4">
+          <a id="read">
+            <img src="Pdf-Flipbook-master-main/images/book5/1.png">
           </a>
         </div>
       </div>
