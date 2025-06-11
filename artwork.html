@@ -95,7 +95,7 @@
     .bookshelf .thumb img {
       width: 100%;
       display: block;
-      vertical-align: top;
+      /* vertical-align: top; */
     }
 
     .bookshelf .shelf-img {
@@ -146,7 +146,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
       <a class="navbar-brand" href="#">
-        <img src="images\logo\Godrej Properties Logo.png" alt="KPK LOGO" width="150">
+        <img src="images\logo\Godrej Properties Logo.png" alt="KPK LOGO" width="200">
       </a>
 
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -210,11 +210,21 @@
   <!-- Footer -->
   <section id="footer" class="footer mt-5">
     <div class="container">
-      <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12 mt-2 mt-sm-2 text-center text-white">
-          <p class="h6">souradeep ash</p>
+      <div class="row justify-content-center align-items-center text-white text-center text-md-start">
+        <div class="col-12 d-flex justify-content-between align-items-center flex-wrap text-white">
+          <!-- Left: Logo -->
+          <a href="https://www.godrejproperties.com/" target="_blank" class="footer-logo">
+            <img src="images/logo/Godrej Properties Logo.png" alt="Godrej Properties" class="img-fluid"
+              style="max-height: 60px;">
+          </a>
+
+          <!-- Right: Text group -->
+          <div class="footer-text-group d-flex flex-wrap text-end">
+            <p class="mb-0 me-3">Copyright &copy; 2025. Godrej Properties</p>
+            <p class="mb-0 footer-link me-3" onclick="handleDisclaimer()">Disclaimer</p>
+            <p class="mb-0 footer-link" onclick="handleSitemap()">Sitemap</p>
+          </div>
         </div>
-        </hr>
       </div>
     </div>
   </section>

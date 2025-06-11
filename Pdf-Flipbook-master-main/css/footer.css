@@ -88,3 +88,23 @@ main {
     margin-bottom: 10px;
 }
 }
+.footer-logo img {
+  max-height: 50px;
+  width: auto;
+}
+
+.footer-link {
+  cursor: pointer;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
+}
+
+.footer-text-group > p {
+  margin-left: 14px;
+}
+
+/* .footer-text-group > p {
+  border: 1px dashed yellow;
+} */
