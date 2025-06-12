@@ -437,7 +437,7 @@
             console.log('✅ Fresh monitoring started for book:', bookId);
           }
         }, 500);
-      }, 2000);
+      }, 100);
     }
 
     function updatePageWithDebounce(bookId, page) {
@@ -490,22 +490,6 @@
           updatePageWithDebounce(monitoringBookId, currentPage);
         }
       }, 200);
-
-      // Always update if page is different
-      if (page && page !== lastKnownPage && bookId === currentBookId) {
-        // Immediate update for any page change
-        console.log('📄 Page update:', lastKnownPage, '->', page, 'for book:', bookId);
-        lastKnownPage = page;
-        bookPageStates[bookId] = page;
-        updateUrl(bookId, page);
-
-        // NEW: Update the input field with the formatted page value
-        const totalPages = getTotalPagesForBook(bookId);
-        const pageParam = formatPageParameter(page, totalPages);
-        if (pageParam) {
-          updatePageInputField(pageParam.split('/')[0]); // Get just the page part (e.g., "2-3" from "2-3/8")
-        }
-      }
     }
     // Add this function to update the input field
     function updatePageInputField(pageValue) {
