@@ -392,6 +392,12 @@
         return parseInt(rangeMatch[1]);
       }
 
+      // Handle range format without total: "2-3"
+      const rangeOnlyMatch = pageParam.match(/^(\d+)-(\d+)$/);
+      if (rangeOnlyMatch) {
+        return parseInt(rangeOnlyMatch[1]);
+      }
+
       // Handle old format: just a number
       const simpleMatch = pageParam.match(/^(\d+)$/);
       if (simpleMatch) {
@@ -431,7 +437,7 @@
             console.log('✅ Fresh monitoring started for book:', bookId);
           }
         }, 500);
-      }, 100);
+      }, 2000);
     }
 
     function updatePageWithDebounce(bookId, page) {
@@ -484,8 +490,35 @@
           updatePageWithDebounce(monitoringBookId, currentPage);
         }
       }, 200);
-    }
 
+      // Always update if page is different
+      if (page && page !== lastKnownPage && bookId === currentBookId) {
+        // Immediate update for any page change
+        console.log('📄 Page update:', lastKnownPage, '->', page, 'for book:', bookId);
+        lastKnownPage = page;
+        bookPageStates[bookId] = page;
+        updateUrl(bookId, page);
+
+        // NEW: Update the input field with the formatted page value
+        const totalPages = getTotalPagesForBook(bookId);
+        const pageParam = formatPageParameter(page, totalPages);
+        if (pageParam) {
+          updatePageInputField(pageParam.split('/')[0]); // Get just the page part (e.g., "2-3" from "2-3/8")
+        }
+      }
+    }
+    // Add this function to update the input field
+    function updatePageInputField(pageValue) {
+      // Find the page input field in the visible flipbook overlay
+      const pageInput = $('.flipbook-overlay:visible .flipbook-currentPageInput');
+      if (pageInput.length > 0) {
+        console.log('📝 Updating input field with:', pageValue);
+        pageInput.val(pageValue);
+      } else {
+        console.log('⚠️ Page input field not found');
+      }
+    }
+    
     function setupFlipbookHooks() {
       const checkFlipbook = setInterval(() => {
         if (typeof FLIPBOOK !== 'undefined') {
@@ -550,45 +583,60 @@
             bookElement.find('a').click();
 
             // Navigate to specific page if provided
+            // Navigate to specific page if provided
             if (pageNum) {
+              // DISABLE URL updates while navigating to target page
+              const originalBookId = currentBookId;
+              currentBookId = null; // Temporarily disable updates
+
               setTimeout(() => {
                 const targetPage = pageNum;
                 const bookIndex = parseInt(bookId) - 1;
 
                 console.log('📍 Navigating to page:', targetPage, 'for book index:', bookIndex);
 
-                // Try multiple methods to navigate to page
-                let navigated = false;
+                // Wait for flipbook to be fully loaded before navigating
+                const waitForFlipbook = setInterval(() => {
+                  let navigated = false;
 
-                // Method 1: FLIPBOOK global object
-                if (typeof FLIPBOOK !== 'undefined' && FLIPBOOK.books && FLIPBOOK.books[bookIndex]) {
-                  FLIPBOOK.books[bookIndex].goToPage(targetPage);
-                  navigated = true;
-                  console.log('✅ Navigated via FLIPBOOK.books');
-                }
-
-                // Method 2: Flipbook instance
-                if (!navigated && flipbookInstances[parseInt(bookId)]) {
-                  const instance = flipbookInstances[parseInt(bookId)];
-                  if (instance[0] && instance[0].flipBook) {
-                    instance[0].flipBook.goToPage(targetPage);
+                  // Method 1: FLIPBOOK global object
+                  if (typeof FLIPBOOK !== 'undefined' && FLIPBOOK.books && FLIPBOOK.books[bookIndex]) {
+                    FLIPBOOK.books[bookIndex].goToPage(targetPage);
                     navigated = true;
-                    console.log('✅ Navigated via instance');
+                    console.log('✅ Navigated via FLIPBOOK.books to page:', targetPage);
+                    clearInterval(waitForFlipbook);
                   }
-                }
 
-                // Method 3: jQuery flipBook method
-                if (!navigated && bookElement.flipBook) {
-                  bookElement.flipBook('gotoPage', targetPage);
-                  navigated = true;
-                  console.log('✅ Navigated via jQuery method');
-                }
+                  // Method 2: Flipbook instance
+                  if (!navigated && flipbookInstances[parseInt(bookId)]) {
+                    const instance = flipbookInstances[parseInt(bookId)];
+                    if (instance[0] && instance[0].flipBook) {
+                      instance[0].flipBook.goToPage(targetPage);
+                      navigated = true;
+                      console.log('✅ Navigated via instance to page:', targetPage);
+                      clearInterval(waitForFlipbook);
+                    }
+                  }
 
-                if (navigated) {
-                  lastKnownPage = targetPage;
-                  bookPageStates[parseInt(bookId)] = targetPage;
-                }
-              }, 2000);
+                  if (navigated) {
+                    // RE-ENABLE URL updates after navigation
+                    currentBookId = originalBookId;
+                    lastKnownPage = targetPage;
+                    bookPageStates[parseInt(bookId)] = targetPage;
+
+                    // Update the input field with the correct page range
+                    const totalPages = getTotalPagesForBook(parseInt(bookId));
+                    const pageParam = formatPageParameter(targetPage, totalPages);
+                    if (pageParam) {
+                      updatePageInputField(pageParam.split('/')[0]); // This will set "2-3" in the input
+                    }
+
+                    console.log('✅ Navigation complete, URL updates re-enabled');
+                  }
+                }, 500);
+
+                setTimeout(() => clearInterval(waitForFlipbook), 10000);
+              }, 1000);
             }
           }, 500);
         }
@@ -733,6 +781,21 @@
         if (e.keyCode == 27 && isFlipbookOpen) {
           console.log('⌨️ ESC key pressed');
           restoreOriginalUrl();
+        }
+      });
+
+      $(document).on('change keypress', '.flipbook-overlay input[type="text"]', function (e) {
+        if (e.type === 'keypress' && e.which !== 13) return; // Only proceed on Enter key or change event
+
+        const inputValue = $(this).val().trim();
+        const pageNum = parsePageFromUrl(inputValue); // This will now handle "2-3" format
+
+        if (pageNum && currentBookId) {
+          // Navigate to the page
+          const bookIndex = currentBookId - 1;
+          if (typeof FLIPBOOK !== 'undefined' && FLIPBOOK.books && FLIPBOOK.books[bookIndex]) {
+            FLIPBOOK.books[bookIndex].goToPage(pageNum);
+          }
         }
       });
 
