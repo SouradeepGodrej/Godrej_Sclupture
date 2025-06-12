@@ -108,12 +108,96 @@
     let flipbookInstances = {};
     let bookPageStates = {}; // Store last known page for each book
     let overlayMonitorInterval = null; // New: Monitor overlay visibility
+    let bookTotalPages = {}; // Store total pages for each book
 
     function getUrlParameter(name) {
       name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
       var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
       var results = regex.exec(location.search);
       return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+
+    // New function to get total pages for a book
+    function getTotalPagesForBook(bookId) {
+      // Try to get from stored value first
+      if (bookTotalPages[bookId]) {
+        return bookTotalPages[bookId];
+      }
+
+      // Try to get from FLIPBOOK global object
+      if (typeof FLIPBOOK !== 'undefined' && FLIPBOOK.books && FLIPBOOK.books[bookId - 1]) {
+        const book = FLIPBOOK.books[bookId - 1];
+        if (book.numPages !== undefined) {
+          bookTotalPages[bookId] = book.numPages;
+          return book.numPages;
+        }
+      }
+
+      // Try to get from flipbook instance
+      if (flipbookInstances[bookId]) {
+        const instance = flipbookInstances[bookId];
+        if (instance[0] && instance[0].flipBook && instance[0].flipBook.numPages !== undefined) {
+          bookTotalPages[bookId] = instance[0].flipBook.numPages;
+          return instance[0].flipBook.numPages;
+        }
+      }
+
+      // Try to get from DOM
+      const visibleOverlay = $('.flipbook-overlay:visible');
+      if (visibleOverlay.length > 0) {
+        const pageDisplay = visibleOverlay.find('.flipbook-currentPageNumber');
+        if (pageDisplay.length > 0 && pageDisplay.is(':visible')) {
+          const pageText = pageDisplay.text().trim();
+          const match = pageText.match(/\d+\s*\/\s*(\d+)/);
+          if (match) {
+            const totalPages = parseInt(match[1]);
+            bookTotalPages[bookId] = totalPages;
+            return totalPages;
+          }
+        }
+      }
+
+      // Default fallback
+      return null;
+    }
+
+    // New function to format page parameter with ranges and total
+    function formatPageParameter(currentPage, totalPages) {
+      if (!currentPage || !totalPages) {
+        return null;
+      }
+
+      // First page (always single)
+      if (currentPage === 1) {
+        return `1/${totalPages}`;
+      }
+
+      // Last page (single if total is even, or if it's the actual last page)
+      if (currentPage === totalPages) {
+        return `${totalPages}/${totalPages}`;
+      }
+
+      // For pages in between, determine if it's a spread
+      if (currentPage > 1 && currentPage < totalPages) {
+        // If current page is even, it's likely the left page of a spread
+        if (currentPage % 2 === 0) {
+          // Show as spread: currentPage-(currentPage+1)
+          const nextPage = Math.min(currentPage + 1, totalPages);
+          if (nextPage <= totalPages && nextPage !== currentPage) {
+            return `${currentPage}-${nextPage}/${totalPages}`;
+          }
+        } else {
+          // If current page is odd and greater than 1, it might be the right page of a spread
+          // Show as spread: (currentPage-1)-currentPage
+          const prevPage = currentPage - 1;
+          if (prevPage >= 2) {
+            return `${prevPage}-${currentPage}/${totalPages}`;
+          }
+        }
+      }
+
+      // Fallback to single page format
+      return `${currentPage}/${totalPages}`;
     }
 
     function updateUrl(bookId, page, force = false) {
@@ -125,13 +209,30 @@
 
       const url = new URL(window.location);
       url.searchParams.set('book', bookId);
+
       if (page && page > 0) {
-        url.searchParams.set('page', page);
+        const totalPages = getTotalPagesForBook(bookId);
+        const pageParam = formatPageParameter(page, totalPages);
+
+        if (pageParam) {
+          // Set the page parameter without encoding the forward slash
+          url.searchParams.set('page', pageParam);
+          // Replace the encoded slash back to normal slash
+          const urlString = url.toString().replace(/%2F/g, '/');
+          window.history.pushState({}, '', urlString);
+          console.log('✅ URL updated:', urlString);
+          return; // Exit early since we already updated the URL
+        } else {
+          // Fallback to simple page number if we can't determine total pages
+          url.searchParams.set('page', page);
+        }
+
         // Store the page state for this book
         bookPageStates[bookId] = page;
       } else {
         url.searchParams.delete('page');
       }
+
       window.history.pushState({}, '', url);
       console.log('✅ URL updated:', url.toString());
     }
@@ -280,6 +381,26 @@
       return currentPage;
     }
 
+    // New function to parse page parameter from URL (handles both old and new formats)
+    function parsePageFromUrl(pageParam) {
+      if (!pageParam) return null;
+
+      // Handle new format: "1/8", "2-3/8", etc.
+      const rangeMatch = pageParam.match(/^(\d+)(?:-(\d+))?\/(\d+)$/);
+      if (rangeMatch) {
+        // For range format, return the first page number
+        return parseInt(rangeMatch[1]);
+      }
+
+      // Handle old format: just a number
+      const simpleMatch = pageParam.match(/^(\d+)$/);
+      if (simpleMatch) {
+        return parseInt(simpleMatch[1]);
+      }
+
+      return null;
+    }
+
     function switchToBook(bookId) {
       console.log('📚 Switching to book:', bookId, 'from:', currentBookId);
 
@@ -406,16 +527,19 @@
 
     function autoOpenFromUrl() {
       const bookId = getUrlParameter('book');
-      const pageNum = getUrlParameter('page');
+      const pageParam = getUrlParameter('page');
 
       if (bookId) {
         const bookElement = $(`.book-${bookId}`);
         if (bookElement.length) {
-          console.log('🎯 Auto-opening book:', bookId, 'page:', pageNum);
+          console.log('🎯 Auto-opening book:', bookId, 'page param:', pageParam);
+
+          // Parse the page number from the parameter (handles both old and new formats)
+          const pageNum = parsePageFromUrl(pageParam);
 
           // Store the page state if provided
           if (pageNum) {
-            bookPageStates[parseInt(bookId)] = parseInt(pageNum);
+            bookPageStates[parseInt(bookId)] = pageNum;
           }
 
           // Use switchToBook to properly handle the transition
@@ -428,7 +552,7 @@
             // Navigate to specific page if provided
             if (pageNum) {
               setTimeout(() => {
-                const targetPage = parseInt(pageNum);
+                const targetPage = pageNum;
                 const bookIndex = parseInt(bookId) - 1;
 
                 console.log('📍 Navigating to page:', targetPage, 'for book index:', bookIndex);
@@ -670,6 +794,7 @@
         isFlipbookOpen,
         lastKnownPage,
         bookPageStates,
+        bookTotalPages,
         hasInterval: !!pageUpdateInterval,
         hasOverlayMonitor: !!overlayMonitorInterval,
         hasDebounce: !!pageUpdateDebounce,
@@ -678,12 +803,19 @@
         instances: Object.keys(flipbookInstances),
         currentUrl: window.location.href,
         originalUrl: originalUrl,
-        anyVisible: isAnyFlipbookVisible()
+        anyVisible: isAnyFlipbookVisible
       });
 
       // Check current page from all sources
       if (currentBookId) {
-        console.log('Current page from different sources:', {
+        const totalPages = getTotalPagesForBook(currentBookId);
+        const currentPage = getCurrentPageFromFlipbook(currentBookId);
+        const pageParam = formatPageParameter(currentPage, totalPages);
+
+        console.log('Page formatting info:', {
+          currentPage,
+          totalPages,
+          formattedParam: pageParam,
           fromFunction: getCurrentPageFromFlipbook(currentBookId),
           fromLastKnown: lastKnownPage,
           fromStored: bookPageStates[currentBookId],
@@ -709,6 +841,7 @@
     window.clearBookStates = function () {
       console.log('🧹 Clearing all book page states');
       bookPageStates = {};
+      bookTotalPages = {};
     };
 
     // New debug function to check overlay visibility
@@ -724,6 +857,13 @@
         });
       });
       return isAnyFlipbookVisible();
+    };
+
+    // New debug function to test page formatting
+    window.testPageFormatting = function (page, total) {
+      const result = formatPageParameter(page, total);
+      console.log(`Page ${page} of ${total} formats to: ${result}`);
+      return result;
     };
   </script>
 
