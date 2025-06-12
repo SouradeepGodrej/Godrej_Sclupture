@@ -106,6 +106,7 @@
     let bookSwitchTimeout = null;
     let pageUpdateDebounce = null;
     let flipbookInstances = {};
+    let bookPageStates = {}; // Store last known page for each book
 
     function getUrlParameter(name) {
       name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
@@ -125,6 +126,8 @@
       url.searchParams.set('book', bookId);
       if (page && page > 0) {
         url.searchParams.set('page', page);
+        // Store the page state for this book
+        bookPageStates[bookId] = page;
       } else {
         url.searchParams.delete('page');
       }
@@ -133,9 +136,12 @@
     }
 
     function restoreOriginalUrl() {
-      window.history.pushState({}, '', originalUrl);
+      // Only restore if we're actually showing a book URL
+      if (window.location.href !== originalUrl) {
+        window.history.pushState({}, '', originalUrl);
+        console.log('🔄 URL restored to original');
+      }
       stopPageMonitoring();
-      console.log('🔄 URL restored to original');
     }
 
     function stopPageMonitoring() {
@@ -167,14 +173,13 @@
         window.pageUpdateTimeout = null;
       }
 
-      // Reset state but keep flipbook instances
+      // Reset state but keep flipbook instances and page states
       currentBookId = null;
       isFlipbookOpen = false;
       lastKnownPage = null;
     }
 
     function getCurrentPageFromFlipbook(bookId) {
-      // Try multiple methods to get current page
       let currentPage = null;
 
       // Method 1: Check FLIPBOOK global object
@@ -195,17 +200,27 @@
         }
       }
 
-      // Method 3: Check DOM element
-      if (!currentPage) {
-        const pageDisplay = $('.flipbook-currentPageNumber');
-        if (pageDisplay.length > 0 && pageDisplay.is(':visible')) {
-          const pageText = pageDisplay.text().trim();
-          const match = pageText.match(/(\d+)/);
-          if (match) {
-            currentPage = parseInt(match[1]);
-            console.log('📖 Got page from DOM:', currentPage);
+      // Method 3: Check DOM element - BUT ONLY for the currently active book
+      if (!currentPage && isFlipbookOpen && bookId === currentBookId) {
+        // Find the visible flipbook overlay
+        const visibleOverlay = $('.flipbook-overlay:visible');
+        if (visibleOverlay.length > 0) {
+          const pageDisplay = visibleOverlay.find('.flipbook-currentPageNumber');
+          if (pageDisplay.length > 0 && pageDisplay.is(':visible')) {
+            const pageText = pageDisplay.text().trim();
+            const match = pageText.match(/(\d+)/);
+            if (match) {
+              currentPage = parseInt(match[1]);
+              console.log('📖 Got page from visible DOM:', currentPage);
+            }
           }
         }
+      }
+
+      // Method 4: Fallback to stored page state
+      if (!currentPage && bookPageStates[bookId]) {
+        currentPage = bookPageStates[bookId];
+        console.log('📖 Got page from stored state:', currentPage);
       }
 
       return currentPage;
@@ -223,8 +238,8 @@
         currentBookId = bookId;
         isFlipbookOpen = true;
 
-        // Get current page from existing flipbook instance if available
-        let initialPage = getCurrentPageFromFlipbook(bookId) || 1;
+        // Get current page - prefer stored state for this book, then try to detect
+        let initialPage = bookPageStates[bookId] || getCurrentPageFromFlipbook(bookId) || 1;
         lastKnownPage = initialPage;
 
         // Update URL immediately
@@ -260,6 +275,7 @@
         // Immediate update for any page change
         console.log('📄 Page update:', lastKnownPage, '->', page, 'for book:', bookId);
         lastKnownPage = page;
+        bookPageStates[bookId] = page; // Store the page state
         updateUrl(bookId, page);
       }
     }
@@ -317,6 +333,7 @@
                   if (currentBookId === bookId) {
                     console.log('🔗 Updating URL from page link:', page);
                     lastKnownPage = page;
+                    bookPageStates[bookId] = page;
                     updateUrl(bookId, page);
                   }
                 }, 100);
@@ -339,6 +356,11 @@
         const bookElement = $(`.book-${bookId}`);
         if (bookElement.length) {
           console.log('🎯 Auto-opening book:', bookId, 'page:', pageNum);
+
+          // Store the page state if provided
+          if (pageNum) {
+            bookPageStates[parseInt(bookId)] = parseInt(pageNum);
+          }
 
           // Use switchToBook to properly handle the transition
           switchToBook(parseInt(bookId));
@@ -384,6 +406,7 @@
 
                 if (navigated) {
                   lastKnownPage = targetPage;
+                  bookPageStates[parseInt(bookId)] = targetPage;
                 }
               }, 2000);
             }
@@ -446,6 +469,7 @@
           restoreOriginalUrl();
         }
       };
+
       Object.keys(bookConfigs).forEach((selector, index) => {
         const bookId = index + 1;
         const config = {
@@ -455,6 +479,7 @@
         };
         const instance = $(selector).flipBook(config);
         flipbookInstances[bookId] = instance;
+
         setTimeout(() => {
           if (instance[0] && instance[0].flipBook) {
             // Store original onPageChange if it exists
@@ -498,10 +523,13 @@
         switchToBook(4);
       });
 
-      // Enhanced close handlers
+      // Enhanced close handlers - check if any book is actually open
       $(document).on('click', '.flipbook-close-btn, .flipbook-overlay .close, .flipbook-btnClose', function () {
         console.log('❌ Close button clicked');
-        restoreOriginalUrl();
+        // Only restore URL if we're actually showing a flipbook
+        if (isFlipbookOpen || currentBookId) {
+          restoreOriginalUrl();
+        }
       });
 
       // Enhanced navigation click handler
@@ -529,14 +557,17 @@
       // Monitor for flipbook viewport removal
       const observer = new MutationObserver(function (mutations) {
         mutations.forEach(function (mutation) {
-          if (mutation.type === 'childList' && isFlipbookOpen) {
+          if (mutation.type === 'childList') {
             mutation.removedNodes.forEach(function (node) {
               if (node.nodeType === 1 &&
                 node.classList &&
                 node.classList.contains('flipbook-lightbox')) {
                 console.log('🗑️ Flipbook lightbox removed');
                 isFlipbookOpen = false;
-                restoreOriginalUrl();
+                // Only restore URL if we actually had a book open
+                if (currentBookId) {
+                  restoreOriginalUrl();
+                }
               }
             });
           }
@@ -555,11 +586,14 @@
         currentBookId,
         isFlipbookOpen,
         lastKnownPage,
+        bookPageStates,
         hasInterval: !!pageUpdateInterval,
         hasDebounce: !!pageUpdateDebounce,
         flipbookExists: typeof FLIPBOOK !== 'undefined',
         flipbookBooks: typeof FLIPBOOK !== 'undefined' ? FLIPBOOK.books : null,
-        instances: Object.keys(flipbookInstances)
+        instances: Object.keys(flipbookInstances),
+        currentUrl: window.location.href,
+        originalUrl: originalUrl
       });
 
       // Check current page from all sources
@@ -567,7 +601,8 @@
         console.log('Current page from different sources:', {
           fromFunction: getCurrentPageFromFlipbook(currentBookId),
           fromLastKnown: lastKnownPage,
-          fromDOM: $('.flipbook-currentPageNumber').text()
+          fromStored: bookPageStates[currentBookId],
+          fromDOM: $('.flipbook-overlay:visible .flipbook-currentPageNumber').text()
         });
       }
     };
@@ -581,8 +616,14 @@
       if (currentBookId) {
         console.log('🔧 Force page update to:', page, 'for book:', currentBookId);
         lastKnownPage = page;
+        bookPageStates[currentBookId] = page;
         updateUrl(currentBookId, page);
       }
+    };
+
+    window.clearBookStates = function () {
+      console.log('🧹 Clearing all book page states');
+      bookPageStates = {};
     };
   </script>
 
