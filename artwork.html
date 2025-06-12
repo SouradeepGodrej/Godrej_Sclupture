@@ -107,6 +107,7 @@
     let pageUpdateDebounce = null;
     let flipbookInstances = {};
     let bookPageStates = {}; // Store last known page for each book
+    let overlayMonitorInterval = null; // New: Monitor overlay visibility
 
     function getUrlParameter(name) {
       name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
@@ -142,6 +143,7 @@
         console.log('🔄 URL restored to original');
       }
       stopPageMonitoring();
+      stopOverlayMonitoring(); // Stop overlay monitoring
     }
 
     function stopPageMonitoring() {
@@ -177,6 +179,58 @@
       currentBookId = null;
       isFlipbookOpen = false;
       lastKnownPage = null;
+    }
+
+    // New function to check if any flipbook overlay is visible
+    function isAnyFlipbookVisible() {
+      const overlays = $('.flipbook-overlay');
+      let hasVisible = false;
+
+      overlays.each(function () {
+        const $overlay = $(this);
+        const display = $overlay.css('display');
+        const isVisible = display !== 'none' && $overlay.is(':visible');
+
+        if (isVisible) {
+          hasVisible = true;
+          console.log('📖 Found visible overlay:', $overlay[0]);
+          return false; // Break the loop
+        }
+      });
+
+      console.log('👁️ Any flipbook visible?', hasVisible, 'Total overlays:', overlays.length);
+      return hasVisible;
+    }
+
+    // New function to start monitoring overlay visibility
+    function startOverlayMonitoring() {
+      if (overlayMonitorInterval) {
+        clearInterval(overlayMonitorInterval);
+      }
+
+      console.log('👁️ Starting overlay visibility monitoring');
+
+      overlayMonitorInterval = setInterval(() => {
+        const anyVisible = isAnyFlipbookVisible();
+
+        if (!anyVisible && (isFlipbookOpen || currentBookId)) {
+          console.log('👁️ No visible overlays detected - closing flipbook');
+          isFlipbookOpen = false;
+          restoreOriginalUrl();
+        } else if (anyVisible && !isFlipbookOpen) {
+          console.log('👁️ Visible overlay detected - flipbook opened');
+          isFlipbookOpen = true;
+        }
+      }, 300); // Check every 300ms
+    }
+
+    // New function to stop overlay monitoring
+    function stopOverlayMonitoring() {
+      if (overlayMonitorInterval) {
+        clearInterval(overlayMonitorInterval);
+        overlayMonitorInterval = null;
+        console.log('👁️ Stopped overlay monitoring');
+      }
     }
 
     function getCurrentPageFromFlipbook(bookId) {
@@ -231,6 +285,7 @@
 
       // COMPLETELY stop all monitoring first
       stopPageMonitoring();
+      stopOverlayMonitoring();
 
       // Force clear any remaining intervals or timeouts
       setTimeout(() => {
@@ -247,10 +302,11 @@
 
         console.log('✅ Book switched to:', bookId, 'initial page:', initialPage);
 
-        // Start monitoring after flipbook settles
+        // Start both monitoring systems after flipbook settles
         setTimeout(() => {
           if (currentBookId === bookId && isFlipbookOpen) {
             startPageMonitoring();
+            startOverlayMonitoring(); // Start overlay monitoring
             console.log('✅ Fresh monitoring started for book:', bookId);
           }
         }, 500);
@@ -459,12 +515,14 @@
 
         // Enhanced callbacks
         onShow: function () {
-          console.log('📖 Book shown');
+          console.log('📖 Book shown via callback');
           isFlipbookOpen = true;
+          // Start overlay monitoring when book shows
+          startOverlayMonitoring();
         },
 
         onHide: function () {
-          console.log('📖 Book hidden');
+          console.log('📖 Book hidden via callback');
           isFlipbookOpen = false;
           restoreOriginalUrl();
         }
@@ -554,7 +612,7 @@
         }
       });
 
-      // Monitor for flipbook viewport removal
+      // Enhanced MutationObserver to watch for overlay changes
       const observer = new MutationObserver(function (mutations) {
         mutations.forEach(function (mutation) {
           if (mutation.type === 'childList') {
@@ -571,10 +629,35 @@
               }
             });
           }
+
+          // Watch for style attribute changes on flipbook overlays
+          if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+            const target = mutation.target;
+            if (target.classList && target.classList.contains('flipbook-overlay')) {
+              const display = target.style.display;
+              console.log('👁️ Overlay style changed:', display, target);
+
+              // Trigger a check after a short delay to allow for multiple changes
+              setTimeout(() => {
+                const anyVisible = isAnyFlipbookVisible();
+                if (!anyVisible && (isFlipbookOpen || currentBookId)) {
+                  console.log('👁️ All overlays hidden - closing flipbook');
+                  isFlipbookOpen = false;
+                  restoreOriginalUrl();
+                }
+              }, 100);
+            }
+          }
         });
       });
 
-      observer.observe(document.body, { childList: true, subtree: true });
+      // Observe both child changes and attribute changes
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['style']
+      });
 
       // Auto-open book if URL parameters are present
       setTimeout(autoOpenFromUrl, 500);
@@ -588,12 +671,14 @@
         lastKnownPage,
         bookPageStates,
         hasInterval: !!pageUpdateInterval,
+        hasOverlayMonitor: !!overlayMonitorInterval,
         hasDebounce: !!pageUpdateDebounce,
         flipbookExists: typeof FLIPBOOK !== 'undefined',
         flipbookBooks: typeof FLIPBOOK !== 'undefined' ? FLIPBOOK.books : null,
         instances: Object.keys(flipbookInstances),
         currentUrl: window.location.href,
-        originalUrl: originalUrl
+        originalUrl: originalUrl,
+        anyVisible: isAnyFlipbookVisible()
       });
 
       // Check current page from all sources
@@ -624,6 +709,21 @@
     window.clearBookStates = function () {
       console.log('🧹 Clearing all book page states');
       bookPageStates = {};
+    };
+
+    // New debug function to check overlay visibility
+    window.checkOverlays = function () {
+      const overlays = $('.flipbook-overlay');
+      console.log('Overlay visibility check:');
+      overlays.each(function (index) {
+        const $overlay = $(this);
+        console.log(`Overlay ${index}:`, {
+          display: $overlay.css('display'),
+          visible: $overlay.is(':visible'),
+          inlineStyle: $overlay.attr('style')
+        });
+      });
+      return isAnyFlipbookVisible();
     };
   </script>
 
