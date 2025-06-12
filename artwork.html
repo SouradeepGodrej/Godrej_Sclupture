@@ -17,25 +17,466 @@
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
   <script src="Pdf-Flipbook-master-main/js/flipbook.min.js"></script>
+
+
+
+
+  <!-- ========== FIXED MONITORING SCRIPT STARTS HERE ========== -->
   <script type="text/javascript">
-    $(document).ready(function () {
-      // Configuration object for each book
-      const bookConfigs = {
-        '.book-1': {
-          pdfUrl: 'Pdf-Flipbook-master-main/pdf/Art at the trees-2.pdf'
-        },
-        '.book-2': {
-          pdfUrl: 'Pdf-Flipbook-master-main/pdf/First-107PG-7830KB.pdf'
-        },
-        '.book-3': {
-          pdfUrl: 'Pdf-Flipbook-master-main/pdf/Second-3PG-74KB.pdf'
-        },
-        '.book-4': {
-          pdfUrl: 'Pdf-Flipbook-master-main/pdf/Third-8PG-330KB.pdf'
+    // MONITORING SYSTEM - Fixed version
+    function initializeMonitoring() {
+      console.log('🚀 Flipbook Monitoring System Initialized');
+
+      // SAFER Monitor for flipbook function calls - wait for flipbook to be ready
+      setTimeout(function () {
+        if ($.fn.flipBook && typeof $.fn.flipBook === 'function') {
+          const originalFlipBook = $.fn.flipBook;
+          $.fn.flipBook = function (options) {
+            console.log('📚 FlipBook initialized for:', {
+              element: this.length > 0 ? this[0].className : 'unknown',
+              selector: this.selector || 'unknown',
+              optionsKeys: options ? Object.keys(options) : [],
+              timestamp: new Date().toISOString()
+            });
+
+            // Safely call original function with proper context
+            try {
+              return originalFlipBook.apply(this, arguments);
+            } catch (error) {
+              console.error('❌ FlipBook initialization error:', error);
+              throw error;
+            }
+          };
+          console.log('✅ FlipBook monitoring override installed');
         }
+      }, 100);
+
+      // Monitor book clicks
+      $(document).on('click', '[class*="book-"]', function (e) {
+        console.log('📖 Book clicked:', {
+          bookClass: this.className,
+          bookElement: this.tagName,
+          timestamp: new Date().toISOString()
+        });
+      });
+
+      // Monitor all flipbook related events
+      $(document).on('click', '[class*="flipbook"]', function (e) {
+        console.log('🎯 Flipbook element clicked:', {
+          element: this.className,
+          action: this.textContent || 'button',
+          timestamp: new Date().toISOString()
+        });
+      });
+
+      // Monitor URL changes
+      const originalPushState = history.pushState;
+      history.pushState = function () {
+        console.log('🔗 URL changed via pushState:', arguments[2]);
+        return originalPushState.apply(history, arguments);
       };
 
-      // Common configuration for all books
+      // Monitor PDF loading requests
+      const originalXHROpen = XMLHttpRequest.prototype.open;
+      XMLHttpRequest.prototype.open = function (method, url) {
+        if (url && url.includes('.pdf')) {
+          console.log('📄 PDF loading request:', url);
+        }
+        return originalXHROpen.apply(this, arguments);
+      };
+    }
+
+    // Initialize monitoring when DOM is ready
+    $(document).ready(function () {
+      initializeMonitoring();
+    });
+  </script>
+  <!-- ========== FIXED MONITORING SCRIPT ENDS HERE ========== -->
+
+
+
+
+
+  <script type="text/javascript">
+    // Enhanced URL management script for flipbook with proper page tracking
+    let originalUrl = window.location.href;
+    let currentBookId = null;
+    let pageUpdateInterval = null;
+    let isFlipbookOpen = false;
+    let lastKnownPage = null;
+    let bookSwitchTimeout = null;
+    let pageUpdateDebounce = null;
+    let flipbookInstances = {};
+    // NEW: Store last known page for each book separately
+    let bookPageMemory = {}; // { bookId: lastPage }
+
+    function getUrlParameter(name) {
+      name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+      var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+      var results = regex.exec(location.search);
+      return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+
+    function updateUrl(bookId, page, force = false) {
+      // Only update if this is still the current book or forced
+      if (!force && bookId !== currentBookId) {
+        console.log('🚫 Ignoring URL update for inactive book:', bookId, 'current:', currentBookId);
+        return;
+      }
+
+      const url = new URL(window.location);
+      url.searchParams.set('book', bookId);
+      if (page && page > 0) {
+        url.searchParams.set('page', page);
+        // NEW: Store the page in memory for this book
+        bookPageMemory[bookId] = page;
+      } else {
+        url.searchParams.delete('page');
+      }
+      window.history.pushState({}, '', url);
+      console.log('✅ URL updated:', url.toString());
+    }
+
+    function restoreOriginalUrl() {
+      window.history.pushState({}, '', originalUrl);
+      stopPageMonitoring();
+      console.log('🔄 URL restored to original');
+    }
+
+    function stopPageMonitoring() {
+      console.log('🛑 Stopping ALL page monitoring for book:', currentBookId);
+
+      // ENHANCED: Save current page to memory before stopping - try all methods
+      if (currentBookId) {
+        let pageToSave = lastKnownPage;
+
+        // Try to get the most accurate current page before stopping
+        if (isFlipbookOpen) {
+          // Try FLIPBOOK global first
+          if (typeof FLIPBOOK !== 'undefined' && FLIPBOOK.books && FLIPBOOK.books[currentBookId - 1]) {
+            const book = FLIPBOOK.books[currentBookId - 1];
+            if (book.currentPage !== undefined) {
+              pageToSave = book.currentPage;
+              console.log('💾 Saving page from FLIPBOOK.books:', pageToSave);
+            }
+          }
+
+          // Try instance method
+          if (!pageToSave && flipbookInstances[currentBookId]) {
+            const instance = flipbookInstances[currentBookId];
+            if (instance[0] && instance[0].flipBook && instance[0].flipBook.currentPage !== undefined) {
+              pageToSave = instance[0].flipBook.currentPage;
+              console.log('💾 Saving page from instance:', pageToSave);
+            }
+          }
+
+          // Try DOM only for current book
+          if (!pageToSave) {
+            const pageDisplay = $('.flipbook-currentPageNumber');
+            if (pageDisplay.length > 0 && pageDisplay.is(':visible')) {
+              const pageText = pageDisplay.text().trim();
+              const match = pageText.match(/(\d+)/);
+              if (match) {
+                pageToSave = parseInt(match[1]);
+                console.log('💾 Saving page from DOM:', pageToSave);
+              }
+            }
+          }
+        }
+
+        // Save to memory if we have a valid page
+        if (pageToSave && pageToSave > 0) {
+          bookPageMemory[currentBookId] = pageToSave;
+          console.log('💾 Saved page', pageToSave, 'for book', currentBookId, 'to memory');
+        }
+      }
+
+      // Clear interval
+      if (pageUpdateInterval) {
+        clearInterval(pageUpdateInterval);
+        pageUpdateInterval = null;
+      }
+
+      // Clear all timeouts
+      if (bookSwitchTimeout) {
+        clearTimeout(bookSwitchTimeout);
+        bookSwitchTimeout = null;
+      }
+
+      if (pageUpdateDebounce) {
+        clearTimeout(pageUpdateDebounce);
+        pageUpdateDebounce = null;
+      }
+
+      // Remove manual event listeners with namespace
+      $(document).off('click.pageMonitoring');
+
+      // Clear any pending page update timeouts
+      if (window.pageUpdateTimeout) {
+        clearTimeout(window.pageUpdateTimeout);
+        window.pageUpdateTimeout = null;
+      }
+
+      // Reset state but keep flipbook instances and page memory
+      currentBookId = null;
+      isFlipbookOpen = false;
+      lastKnownPage = null;
+    }
+
+    function getCurrentPageFromFlipbook(bookId) {
+      // Try multiple methods to get current page
+      let currentPage = null;
+
+      // Method 1: Check FLIPBOOK global object
+      if (typeof FLIPBOOK !== 'undefined' && FLIPBOOK.books && FLIPBOOK.books[bookId - 1]) {
+        const book = FLIPBOOK.books[bookId - 1];
+        if (book.currentPage !== undefined) {
+          currentPage = book.currentPage;
+          console.log('📖 Got page from FLIPBOOK.books:', currentPage);
+        }
+      }
+
+      // Method 2: Check flipbook instance
+      if (!currentPage && flipbookInstances[bookId]) {
+        const instance = flipbookInstances[bookId];
+        if (instance[0] && instance[0].flipBook && instance[0].flipBook.currentPage !== undefined) {
+          currentPage = instance[0].flipBook.currentPage;
+          console.log('📖 Got page from instance:', currentPage);
+        }
+      }
+
+      // Method 3: Check DOM element - FIXED: Only read DOM for the CURRENT active book
+      if (!currentPage && bookId === currentBookId && isFlipbookOpen) {
+        const pageDisplay = $('.flipbook-currentPageNumber');
+        if (pageDisplay.length > 0 && pageDisplay.is(':visible')) {
+          const pageText = pageDisplay.text().trim();
+          const match = pageText.match(/(\d+)/);
+          if (match) {
+            currentPage = parseInt(match[1]);
+            console.log('📖 Got page from DOM for current book:', currentPage, 'bookId:', bookId);
+          }
+        }
+      }
+
+      // Method 4: NEW - Fallback to stored memory if no other method works
+      if (!currentPage && bookPageMemory[bookId]) {
+        currentPage = bookPageMemory[bookId];
+        console.log('📖 Got page from memory fallback:', currentPage, 'for book:', bookId);
+      }
+
+      return currentPage;
+    }
+
+    function switchToBook(bookId) {
+      console.log('📚 Switching to book:', bookId, 'from:', currentBookId);
+
+      // COMPLETELY stop all monitoring first
+      stopPageMonitoring();
+
+      // Force clear any remaining intervals or timeouts
+      setTimeout(() => {
+        // Set new book state
+        currentBookId = bookId;
+        isFlipbookOpen = true;
+
+        // FIXED: Get initial page from memory first, then fallback to other methods
+        let initialPage = bookPageMemory[bookId] || getCurrentPageFromFlipbook(bookId) || 1;
+
+        // If we have a remembered page, prefer that over current flipbook state
+        if (bookPageMemory[bookId]) {
+          initialPage = bookPageMemory[bookId];
+          console.log('💾 Retrieved remembered page for book', bookId, ':', initialPage);
+        } else {
+          // Only get from flipbook if no memory exists
+          initialPage = getCurrentPageFromFlipbook(bookId) || 1;
+          console.log('🔍 Got initial page from flipbook for book', bookId, ':', initialPage);
+        }
+
+        lastKnownPage = initialPage;
+
+        // Update URL immediately
+        updateUrl(bookId, initialPage, true);
+
+        console.log('✅ Book switched to:', bookId, 'initial page:', initialPage);
+
+        // Start monitoring after flipbook settles
+        setTimeout(() => {
+          if (currentBookId === bookId && isFlipbookOpen) {
+            startPageMonitoring();
+            console.log('✅ Fresh monitoring started for book:', bookId);
+          }
+        }, 500);
+      }, 100);
+    }
+
+    function updatePageWithDebounce(bookId, page) {
+      // Clear any pending updates
+      if (pageUpdateDebounce) {
+        clearTimeout(pageUpdateDebounce);
+        pageUpdateDebounce = null;
+      }
+
+      // Only update if this is the current book
+      if (bookId !== currentBookId) {
+        console.log('🚫 Ignoring page update for inactive book:', bookId, 'current:', currentBookId);
+        return;
+      }
+
+      // Always update if page is different
+      if (page && page !== lastKnownPage && bookId === currentBookId) {
+        // Immediate update for any page change
+        console.log('📄 Page update:', lastKnownPage, '->', page, 'for book:', bookId);
+        lastKnownPage = page;
+        updateUrl(bookId, page);
+      }
+    }
+
+    function startPageMonitoring() {
+      if (!currentBookId || pageUpdateInterval) {
+        console.log('🚫 Cannot start monitoring - no book ID or interval exists');
+        return;
+      }
+
+      console.log('🔍 Starting page monitoring for book:', currentBookId);
+      const monitoringBookId = currentBookId;
+
+      pageUpdateInterval = setInterval(function () {
+        // Only monitor if this is still the active book and flipbook is open
+        if (!isFlipbookOpen || monitoringBookId !== currentBookId) {
+          console.log('🚫 Monitoring stopped - book changed or closed');
+          clearInterval(pageUpdateInterval);
+          pageUpdateInterval = null;
+          return;
+        }
+
+        // Get current page using enhanced method
+        let currentPage = getCurrentPageFromFlipbook(monitoringBookId);
+
+        // Update page if found and valid
+        if (currentPage && currentPage > 0 && currentPage !== lastKnownPage) {
+          console.log('🔍 Page monitoring detected change:', lastKnownPage, '->', currentPage, 'for book:', monitoringBookId);
+          updatePageWithDebounce(monitoringBookId, currentPage);
+        }
+      }, 200);
+    }
+
+    function setupFlipbookHooks() {
+      const checkFlipbook = setInterval(() => {
+        if (typeof FLIPBOOK !== 'undefined') {
+          clearInterval(checkFlipbook);
+          console.log('🔗 FLIPBOOK object found, setting up hooks');
+
+          // Enhanced onPageLinkClick with proper page tracking
+          if (FLIPBOOK.onPageLinkClick) {
+            const originalOnPageLinkClick = FLIPBOOK.onPageLinkClick;
+            FLIPBOOK.onPageLinkClick = function (e) {
+              console.log('🔗 Page link clicked:', e.dataset);
+
+              const bookId = parseInt(e.dataset.bookid);
+              const page = parseInt(e.dataset.page);
+
+              // Call original function
+              const result = originalOnPageLinkClick.apply(this, arguments);
+
+              // Update our tracking
+              if (bookId && page && bookId === currentBookId) {
+                setTimeout(() => {
+                  if (currentBookId === bookId) {
+                    console.log('🔗 Updating URL from page link:', page);
+                    lastKnownPage = page;
+                    updateUrl(bookId, page);
+                  }
+                }, 100);
+              }
+
+              return result;
+            };
+          }
+        }
+      }, 100);
+
+      setTimeout(() => clearInterval(checkFlipbook), 10000);
+    }
+
+    function autoOpenFromUrl() {
+      const bookId = getUrlParameter('book');
+      const pageNum = getUrlParameter('page');
+
+      if (bookId) {
+        const bookElement = $(`.book-${bookId}`);
+        if (bookElement.length) {
+          console.log('🎯 Auto-opening book:', bookId, 'page:', pageNum);
+
+          // NEW: Store the URL page in memory before switching
+          if (pageNum) {
+            bookPageMemory[parseInt(bookId)] = parseInt(pageNum);
+            console.log('💾 Stored URL page in memory:', pageNum, 'for book:', bookId);
+          }
+
+          // Use switchToBook to properly handle the transition
+          switchToBook(parseInt(bookId));
+
+          // Trigger click to open the book
+          setTimeout(() => {
+            bookElement.find('a').click();
+
+            // Navigate to specific page if provided
+            if (pageNum) {
+              setTimeout(() => {
+                const targetPage = parseInt(pageNum);
+                const bookIndex = parseInt(bookId) - 1;
+
+                console.log('📍 Navigating to page:', targetPage, 'for book index:', bookIndex);
+
+                // Try multiple methods to navigate to page
+                let navigated = false;
+
+                // Method 1: FLIPBOOK global object
+                if (typeof FLIPBOOK !== 'undefined' && FLIPBOOK.books && FLIPBOOK.books[bookIndex]) {
+                  FLIPBOOK.books[bookIndex].goToPage(targetPage);
+                  navigated = true;
+                  console.log('✅ Navigated via FLIPBOOK.books');
+                }
+
+                // Method 2: Flipbook instance
+                if (!navigated && flipbookInstances[parseInt(bookId)]) {
+                  const instance = flipbookInstances[parseInt(bookId)];
+                  if (instance[0] && instance[0].flipBook) {
+                    instance[0].flipBook.goToPage(targetPage);
+                    navigated = true;
+                    console.log('✅ Navigated via instance');
+                  }
+                }
+
+                // Method 3: jQuery flipBook method
+                if (!navigated && bookElement.flipBook) {
+                  bookElement.flipBook('gotoPage', targetPage);
+                  navigated = true;
+                  console.log('✅ Navigated via jQuery method');
+                }
+
+                if (navigated) {
+                  lastKnownPage = targetPage;
+                  bookPageMemory[parseInt(bookId)] = targetPage; // NEW: Store in memory
+                }
+              }, 2000);
+            }
+          }, 500);
+        }
+      }
+    }
+
+    // Document ready function
+    $(document).ready(function () {
+      setupFlipbookHooks();
+
+      const bookConfigs = {
+        '.book-1': { pdfUrl: 'Pdf-Flipbook-master-main/pdf/Art at the trees-2.pdf' },
+        '.book-2': { pdfUrl: 'Pdf-Flipbook-master-main/pdf/First-107PG-7830KB.pdf' },
+        '.book-3': { pdfUrl: 'Pdf-Flipbook-master-main/pdf/Second-3PG-74KB.pdf' },
+        '.book-4': { pdfUrl: 'Pdf-Flipbook-master-main/pdf/Third-8PG-330KB.pdf' }
+      };
+
       const commonConfig = {
         lightBox: true,
         layout: 3,
@@ -65,23 +506,185 @@
         },
         facebook: { enabled: true, url: "facebook.com" },
         google_plus: { enabled: true, url: "google.com" },
-        email: {
-          enabled: true,
-          url: "email.com",
-          title: "PDF KPK",
-          description: "email.com"
-        },
+        email: { enabled: true, url: "email.com", title: "PDF KPK", description: "email.com" },
         twitter: { enabled: true, url: "twitter.com" },
-        pinterest: { enabled: true, url: "pinsterest.com" }
+        pinterest: { enabled: true, url: "pinsterest.com" },
+
+        // Enhanced callbacks
+        onShow: function () {
+          console.log('📖 Book shown');
+          isFlipbookOpen = true;
+        },
+
+        onHide: function () {
+          console.log('📖 Book hidden');
+          isFlipbookOpen = false;
+          restoreOriginalUrl();
+        }
       };
 
-      // Initialize flipbook for each book
-      Object.keys(bookConfigs).forEach(selector => {
-        const config = { ...commonConfig, ...bookConfigs[selector] };
-        $(selector).flipBook(config);
+      // Initialize flipbook for each book with enhanced page tracking
+      Object.keys(bookConfigs).forEach((selector, index) => {
+        const bookId = index + 1;
+        const config = {
+          ...commonConfig,
+          ...bookConfigs[selector],
+          bookId: bookId
+        };
+
+        const instance = $(selector).flipBook(config);
+        flipbookInstances[bookId] = instance;
+
+        // Enhanced page change callback with better tracking
+        setTimeout(() => {
+          if (instance[0] && instance[0].flipBook) {
+            // Store original onPageChange if it exists
+            const originalOnPageChange = instance[0].flipBook.onPageChange;
+
+            instance[0].flipBook.onPageChange = function (page) {
+              console.log('📄 FlipBook onPageChange:', page, 'for book:', bookId, 'current book:', currentBookId);
+
+              // Call original callback if it exists
+              if (originalOnPageChange && typeof originalOnPageChange === 'function') {
+                originalOnPageChange.call(this, page);
+              }
+
+              // Update URL if this is the current book
+              if (bookId === currentBookId && isFlipbookOpen && page !== lastKnownPage) {
+                updatePageWithDebounce(bookId, page);
+              }
+            };
+          }
+        }, 500);
       });
+
+      // Store flipbook instances globally
+      window.flipbookInstances = flipbookInstances;
+
+      // Enhanced click handlers
+      $('.book-1 a').click(function (e) {
+        console.log('🖱️ Book 1 clicked');
+        switchToBook(1);
+      });
+      $('.book-2 a').click(function (e) {
+        console.log('🖱️ Book 2 clicked');
+        switchToBook(2);
+      });
+      $('.book-3 a').click(function (e) {
+        console.log('🖱️ Book 3 clicked');
+        switchToBook(3);
+      });
+      $('.book-4 a').click(function (e) {
+        console.log('🖱️ Book 4 clicked');
+        switchToBook(4);
+      });
+
+      // Enhanced close handlers
+      $(document).on('click', '.flipbook-close-btn, .flipbook-overlay .close, .flipbook-btnClose', function () {
+        console.log('❌ Close button clicked');
+        restoreOriginalUrl();
+      });
+
+      // Enhanced navigation click handler
+      $(document).on('click.pageMonitoring', '.flipbook-nav, .flipbook-btn, .flipbook-page', function () {
+        if (currentBookId && isFlipbookOpen) {
+          setTimeout(() => {
+            // Get current page using enhanced method
+            const newPage = getCurrentPageFromFlipbook(currentBookId);
+            if (newPage && newPage !== lastKnownPage) {
+              console.log('📄 Manual navigation detected:', newPage, 'for book:', currentBookId);
+              updatePageWithDebounce(currentBookId, newPage);
+            }
+          }, 200);
+        }
+      });
+
+      // ESC key handler
+      $(document).keyup(function (e) {
+        if (e.keyCode == 27 && isFlipbookOpen) {
+          console.log('⌨️ ESC key pressed');
+          restoreOriginalUrl();
+        }
+      });
+
+      // Monitor for flipbook viewport removal
+      const observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+          if (mutation.type === 'childList' && isFlipbookOpen) {
+            mutation.removedNodes.forEach(function (node) {
+              if (node.nodeType === 1 &&
+                node.classList &&
+                node.classList.contains('flipbook-lightbox')) {
+                console.log('🗑️ Flipbook lightbox removed');
+                isFlipbookOpen = false;
+                restoreOriginalUrl();
+              }
+            });
+          }
+        });
+      });
+
+      observer.observe(document.body, { childList: true, subtree: true });
+
+      // Auto-open book if URL parameters are present
+      setTimeout(autoOpenFromUrl, 500);
     });
+
+    // Enhanced debug functions
+    window.debugFlipbook = function () {
+      console.log('Current state:', {
+        currentBookId,
+        isFlipbookOpen,
+        lastKnownPage,
+        hasInterval: !!pageUpdateInterval,
+        hasDebounce: !!pageUpdateDebounce,
+        flipbookExists: typeof FLIPBOOK !== 'undefined',
+        flipbookBooks: typeof FLIPBOOK !== 'undefined' ? FLIPBOOK.books : null,
+        instances: Object.keys(flipbookInstances),
+        bookPageMemory: bookPageMemory // NEW: Show page memory
+      });
+
+      // Check current page from all sources
+      if (currentBookId) {
+        console.log('Current page from different sources:', {
+          fromFunction: getCurrentPageFromFlipbook(currentBookId),
+          fromLastKnown: lastKnownPage,
+          fromDOM: $('.flipbook-currentPageNumber').text(),
+          fromMemory: bookPageMemory[currentBookId] // NEW: Show memory
+        });
+      }
+    };
+
+    window.forceBookSwitch = function (bookId) {
+      console.log('🔧 Force switching to book:', bookId);
+      switchToBook(bookId);
+    };
+
+    window.forcePageUpdate = function (page) {
+      if (currentBookId) {
+        console.log('🔧 Force page update to:', page, 'for book:', currentBookId);
+        lastKnownPage = page;
+        updateUrl(currentBookId, page);
+      }
+    };
+
+    // NEW: Debug function to check page memory
+    window.showPageMemory = function () {
+      console.log('📚 Page Memory for all books:', bookPageMemory);
+    };
+
   </script>
+
+
+
+
+
+
+
+
+
+
+
 
   <style type="text/css">
     body {
