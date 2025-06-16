@@ -113,12 +113,7 @@ function formatPageParameter(currentPage, totalPages) {
 function updateUrl(bookId, page, force = false) {
   // Only update if this is still the current book or forced
   if (!force && bookId !== currentBookId) {
-    console.log(
-      "🚫 Ignoring URL update for inactive book:",
-      bookId,
-      "current:",
-      currentBookId
-    );
+    // console.log( "🚫 Ignoring URL update for inactive book:", bookId, "current:", currentBookId );
     return;
   }
 
@@ -135,7 +130,7 @@ function updateUrl(bookId, page, force = false) {
       // Replace the encoded slash back to normal slash
       const urlString = url.toString().replace(/%2F/g, "/");
       window.history.pushState({}, "", urlString);
-      console.log("✅ URL updated:", urlString);
+      // console.log("✅ URL updated:", urlString);
       return; // Exit early since we already updated the URL
     } else {
       // Fallback to simple page number if we can't determine total pages
@@ -149,21 +144,21 @@ function updateUrl(bookId, page, force = false) {
   }
 
   window.history.pushState({}, "", url);
-  console.log("✅ URL updated:", url.toString());
+  // console.log("✅ URL updated:", url.toString());
 }
 
 function restoreOriginalUrl() {
   // Only restore if we're actually showing a book URL
   if (window.location.href !== originalUrl) {
     window.history.pushState({}, "", originalUrl);
-    console.log("🔄 URL restored to original");
+    // console.log("🔄 URL restored to original");
   }
   stopPageMonitoring();
   stopOverlayMonitoring(); // Stop overlay monitoring
 }
 
 function stopPageMonitoring() {
-  console.log("🛑 Stopping ALL page monitoring for book:", currentBookId);
+  // console.log("🛑 Stopping ALL page monitoring for book:", currentBookId);
 
   // Clear interval
   if (pageUpdateInterval) {
@@ -209,17 +204,12 @@ function isAnyFlipbookVisible() {
 
     if (isVisible) {
       hasVisible = true;
-      console.log("📖 Found visible overlay:", $overlay[0]);
+      // console.log("📖 Found visible overlay:", $overlay[0]);
       return false; // Break the loop
     }
   });
 
-  console.log(
-    "👁️ Any flipbook visible?",
-    hasVisible,
-    "Total overlays:",
-    overlays.length
-  );
+  // console.log( "👁️ Any flipbook visible?", hasVisible, "Total overlays:", overlays.length );
   return hasVisible;
 }
 
@@ -229,17 +219,17 @@ function startOverlayMonitoring() {
     clearInterval(overlayMonitorInterval);
   }
 
-  console.log("👁️ Starting overlay visibility monitoring");
+  // console.log("👁️ Starting overlay visibility monitoring");
 
   overlayMonitorInterval = setInterval(() => {
     const anyVisible = isAnyFlipbookVisible();
 
     if (!anyVisible && (isFlipbookOpen || currentBookId)) {
-      console.log("👁️ No visible overlays detected - closing flipbook");
+      // console.log("👁️ No visible overlays detected - closing flipbook");
       isFlipbookOpen = false;
       restoreOriginalUrl();
     } else if (anyVisible && !isFlipbookOpen) {
-      console.log("👁️ Visible overlay detected - flipbook opened");
+      // console.log("👁️ Visible overlay detected - flipbook opened");
       isFlipbookOpen = true;
     }
   }, 300); // Check every 300ms
@@ -250,7 +240,7 @@ function stopOverlayMonitoring() {
   if (overlayMonitorInterval) {
     clearInterval(overlayMonitorInterval);
     overlayMonitorInterval = null;
-    console.log("👁️ Stopped overlay monitoring");
+    // console.log("👁️ Stopped overlay monitoring");
   }
 }
 
@@ -408,26 +398,14 @@ function updatePageWithDebounce(bookId, page) {
 
   // Only update if this is the current book
   if (bookId !== currentBookId) {
-    console.log(
-      "🚫 Ignoring page update for inactive book:",
-      bookId,
-      "current:",
-      currentBookId
-    );
+    // console.log( "🚫 Ignoring page update for inactive book:", bookId, "current:", currentBookId );
     return;
   }
 
   // Always update if page is different
   if (page && page !== lastKnownPage && bookId === currentBookId) {
     // Immediate update for any page change
-    console.log(
-      "📄 Page update:",
-      lastKnownPage,
-      "->",
-      page,
-      "for book:",
-      bookId
-    );
+    // console.log("📄 Page update:", lastKnownPage, "->", page, "for book:",bookId );
     lastKnownPage = page;
     bookPageStates[bookId] = page; // Store the page state
     updateUrl(bookId, page);
@@ -436,17 +414,17 @@ function updatePageWithDebounce(bookId, page) {
 
 function startPageMonitoring() {
   if (!currentBookId || pageUpdateInterval) {
-    console.log("🚫 Cannot start monitoring - no book ID or interval exists");
+    // console.log("🚫 Cannot start monitoring - no book ID or interval exists");
     return;
   }
 
-  console.log("🔍 Starting page monitoring for book:", currentBookId);
+  // console.log("🔍 Starting page monitoring for book:", currentBookId);
   const monitoringBookId = currentBookId;
 
   pageUpdateInterval = setInterval(function () {
     // Only monitor if this is still the active book and flipbook is open
     if (!isFlipbookOpen || monitoringBookId !== currentBookId) {
-      console.log("🚫 Monitoring stopped - book changed or closed");
+      // console.log("🚫 Monitoring stopped - book changed or closed");
       clearInterval(pageUpdateInterval);
       pageUpdateInterval = null;
       return;
@@ -457,14 +435,7 @@ function startPageMonitoring() {
 
     // Update page if found and valid
     if (currentPage && currentPage > 0 && currentPage !== lastKnownPage) {
-      console.log(
-        "🔍 Page monitoring detected change:",
-        lastKnownPage,
-        "->",
-        currentPage,
-        "for book:",
-        monitoringBookId
-      );
+      // console.log( "🔍 Page monitoring detected change:", lastKnownPage, "->", currentPage, "for book:", monitoringBookId);
       updatePageWithDebounce(monitoringBookId, currentPage);
     }
   }, 200);
@@ -474,10 +445,10 @@ function updatePageInputField(pageValue) {
   // Find the page input field in the visible flipbook overlay
   const pageInput = $(".flipbook-overlay:visible .flipbook-currentPageInput");
   if (pageInput.length > 0) {
-    console.log("📝 Updating input field with:", pageValue);
+    // console.log("📝 Updating input field with:", pageValue);
     pageInput.val(pageValue);
   } else {
-    console.log("⚠️ Page input field not found");
+    // console.log("⚠️ Page input field not found");
   }
 }
 
@@ -485,13 +456,13 @@ function setupFlipbookHooks() {
   const checkFlipbook = setInterval(() => {
     if (typeof FLIPBOOK !== "undefined") {
       clearInterval(checkFlipbook);
-      console.log("🔗 FLIPBOOK object found, setting up hooks");
+      // console.log("🔗 FLIPBOOK object found, setting up hooks");
 
       // Enhanced onPageLinkClick with proper page tracking
       if (FLIPBOOK.onPageLinkClick) {
         const originalOnPageLinkClick = FLIPBOOK.onPageLinkClick;
         FLIPBOOK.onPageLinkClick = function (e) {
-          console.log("🔗 Page link clicked:", e.dataset);
+          // console.log("🔗 Page link clicked:", e.dataset);
 
           const bookId = parseInt(e.dataset.bookid);
           const page = parseInt(e.dataset.page);
@@ -503,7 +474,7 @@ function setupFlipbookHooks() {
           if (bookId && page && bookId === currentBookId) {
             setTimeout(() => {
               if (currentBookId === bookId) {
-                console.log("🔗 Updating URL from page link:", page);
+                // console.log("🔗 Updating URL from page link:", page);
                 lastKnownPage = page;
                 bookPageStates[bookId] = page;
                 updateUrl(bookId, page);
@@ -555,12 +526,7 @@ function autoOpenFromUrl() {
             const targetPage = pageNum;
             const bookIndex = parseInt(bookId) - 1;
 
-            console.log(
-              "📍 Navigating to page:",
-              targetPage,
-              "for book index:",
-              bookIndex
-            );
+            // console.log( "📍 Navigating to page:", targetPage, "for book index:", bookIndex);
 
             // Wait for flipbook to be fully loaded before navigating
             const waitForFlipbook = setInterval(() => {
@@ -574,10 +540,7 @@ function autoOpenFromUrl() {
               ) {
                 FLIPBOOK.books[bookIndex].goToPage(targetPage);
                 navigated = true;
-                console.log(
-                  "✅ Navigated via FLIPBOOK.books to page:",
-                  targetPage
-                );
+                // console.log( "✅ Navigated via FLIPBOOK.books to page:", targetPage );
                 clearInterval(waitForFlipbook);
               }
 
@@ -587,7 +550,7 @@ function autoOpenFromUrl() {
                 if (instance[0] && instance[0].flipBook) {
                   instance[0].flipBook.goToPage(targetPage);
                   navigated = true;
-                  console.log("✅ Navigated via instance to page:", targetPage);
+                  // console.log("✅ Navigated via instance to page:", targetPage);
                   clearInterval(waitForFlipbook);
                 }
               }
@@ -605,7 +568,7 @@ function autoOpenFromUrl() {
                   updatePageInputField(pageParam.split("/")[0]); // This will set "2-3" in the input
                 }
 
-                console.log("✅ Navigation complete, URL updates re-enabled");
+                // console.log("✅ Navigation complete, URL updates re-enabled");
               }
             }, 500);
 
@@ -625,10 +588,8 @@ $(document).ready(function () {
       pdfUrl: "Pdf-Flipbook-master-main/pdf/Art at the trees-2.pdf",
     },
     ".book-2": {
-      pdfUrl: "Pdf-Flipbook-master-main/pdf/First-107PG-7830KB.pdf",
+      pdfUrl: "",
     },
-    ".book-3": { pdfUrl: "Pdf-Flipbook-master-main/pdf/Second-3PG-74KB.pdf" },
-    ".book-4": { pdfUrl: "Pdf-Flipbook-master-main/pdf/Third-8PG-330KB.pdf" },
   };
   const commonConfig = {
     lightBox: true,
@@ -699,15 +660,7 @@ $(document).ready(function () {
         const originalOnPageChange = instance[0].flipBook.onPageChange;
 
         instance[0].flipBook.onPageChange = function (page) {
-          console.log(
-            "📄 FlipBook onPageChange:",
-            page,
-            "for book:",
-            bookId,
-            "current book:",
-            currentBookId
-          );
-
+          // console.log( "📄 FlipBook onPageChange:", page, "for book:", bookId, "current book:", currentBookId );
           // Call original callback if it exists
           if (
             originalOnPageChange &&
@@ -734,20 +687,12 @@ $(document).ready(function () {
 
   // Enhanced click handlers
   $(".book-1 a").click(function (e) {
-    console.log("🖱️ Book 1 clicked");
+    // console.log("🖱️ Book 1 clicked");
     switchToBook(1);
   });
   $(".book-2 a").click(function (e) {
-    console.log("🖱️ Book 2 clicked");
+    // console.log("🖱️ Book 2 clicked");
     switchToBook(2);
-  });
-  $(".book-3 a").click(function (e) {
-    console.log("🖱️ Book 3 clicked");
-    switchToBook(3);
-  });
-  $(".book-4 a").click(function (e) {
-    console.log("🖱️ Book 4 clicked");
-    switchToBook(4);
   });
 
   // Enhanced close handlers - check if any book is actually open
@@ -755,7 +700,7 @@ $(document).ready(function () {
     "click",
     ".flipbook-close-btn, .flipbook-overlay .close, .flipbook-btnClose",
     function () {
-      console.log("❌ Close button clicked");
+      // console.log("❌ Close button clicked");
       // Only restore URL if we're actually showing a flipbook
       if (isFlipbookOpen || currentBookId) {
         restoreOriginalUrl();
@@ -773,12 +718,7 @@ $(document).ready(function () {
           // Get current page using enhanced method
           const newPage = getCurrentPageFromFlipbook(currentBookId);
           if (newPage && newPage !== lastKnownPage) {
-            console.log(
-              "📄 Manual navigation detected:",
-              newPage,
-              "for book:",
-              currentBookId
-            );
+            // console.log( "📄 Manual navigation detected:", newPage, "for book:", currentBookId);
             updatePageWithDebounce(currentBookId, newPage);
           }
         }, 200);
@@ -789,7 +729,7 @@ $(document).ready(function () {
   // ESC key handler
   $(document).keyup(function (e) {
     if (e.keyCode == 27 && isFlipbookOpen) {
-      console.log("⌨️ ESC key pressed");
+      // console.log("⌨️ ESC key pressed");
       restoreOriginalUrl();
     }
   });
@@ -827,7 +767,7 @@ $(document).ready(function () {
             node.classList &&
             node.classList.contains("flipbook-lightbox")
           ) {
-            console.log("🗑️ Flipbook lightbox removed");
+            // console.log("🗑️ Flipbook lightbox removed");
             isFlipbookOpen = false;
             // Only restore URL if we actually had a book open
             if (currentBookId) {
@@ -845,13 +785,13 @@ $(document).ready(function () {
         const target = mutation.target;
         if (target.classList && target.classList.contains("flipbook-overlay")) {
           const display = target.style.display;
-          console.log("👁️ Overlay style changed:", display, target);
+          // console.log("👁️ Overlay style changed:", display, target);
 
           // Trigger a check after a short delay to allow for multiple changes
           setTimeout(() => {
             const anyVisible = isAnyFlipbookVisible();
             if (!anyVisible && (isFlipbookOpen || currentBookId)) {
-              console.log("👁️ All overlays hidden - closing flipbook");
+              // console.log("👁️ All overlays hidden - closing flipbook");
               isFlipbookOpen = false;
               restoreOriginalUrl();
             }
@@ -950,6 +890,6 @@ window.checkOverlays = function () {
 // New debug function to test page formatting
 window.testPageFormatting = function (page, total) {
   const result = formatPageParameter(page, total);
-  console.log(`Page ${page} of ${total} formats to: ${result}`);
+  // console.log(`Page ${page} of ${total} formats to: ${result}`);
   return result;
 };

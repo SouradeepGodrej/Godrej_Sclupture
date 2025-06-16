@@ -2,6 +2,7 @@
 let currentSlide = 0;
 let slideInterval;
 const slides = document.querySelectorAll('.slide');
+// const sliderContainer = document.querySelector('.slider-container');
 const dots = document.querySelectorAll('.dot');
 let touchStartX = 0;
 let touchEndX = 0;
@@ -32,6 +33,67 @@ function initializeSlider() {
             resetAutoSlide();
         });
     });
+    
+    // Touch and Mouse events for slider
+    const sliderContainer = document.querySelector('.slider-container');
+    let isDragging = false;
+    let startX = 0;
+    
+    // TOUCH EVENTS (Mobile)
+    sliderContainer.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+        e.stopPropagation();
+    });
+
+    sliderContainer.addEventListener('touchend', e => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+        e.stopPropagation();
+    });
+    
+    // MOUSE EVENTS (PC)
+    sliderContainer.addEventListener('mousedown', e => {
+        isDragging = true;
+        startX = e.screenX;
+        sliderContainer.style.cursor = 'grabbing';
+        e.preventDefault();
+    });
+    
+    sliderContainer.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        e.preventDefault();
+    });
+    
+    sliderContainer.addEventListener('mouseup', e => {
+        if (!isDragging) return;
+        isDragging = false;
+        sliderContainer.style.cursor = 'grab';
+        
+        const endX = e.screenX;
+        const diff = startX - endX;
+        const swipeThreshold = 50;
+        
+        if (Math.abs(diff) > swipeThreshold) {
+            if (diff > 0) {
+                // Drag left - next slide
+                nextSlide();
+                resetAutoSlide();
+            } else {
+                // Drag right - previous slide
+                const prevIndex = currentSlide === 0 ? slides.length - 1 : currentSlide - 1;
+                goToSlide(prevIndex);
+                resetAutoSlide();
+            }
+        }
+    });
+    
+    sliderContainer.addEventListener('mouseleave', () => {
+        isDragging = false;
+        sliderContainer.style.cursor = 'grab';
+    });
+    
+    // Set initial cursor
+    sliderContainer.style.cursor = 'grab';
 }
 
 function goToSlide(slideIndex) {
@@ -350,14 +412,15 @@ document.querySelectorAll('img').forEach(img => {
     });
 });
 
-document.addEventListener('touchstart', e => {
-    touchStartX = e.changedTouches[0].screenX;
-});
+// sliderContainer.addEventListener('touchstart', e => {
+//     touchStartX = e.changedTouches[0].screenX;
+//     e.stopPropagation(); // Prevent other touch handlers
+// });
 
-document.addEventListener('touchend', e => {
-    touchEndX = e.changedTouches[0].screenX;
-    handleSwipe();
-});
+// sliderContainer.addEventListener('touchend', e => {
+//     touchEndX = e.changedTouches[0].screenX;
+//     handleSwipe();
+// });
 
 function handleSwipe() {
     const swipeThreshold = 50;
