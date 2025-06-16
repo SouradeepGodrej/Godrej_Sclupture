@@ -21,12 +21,12 @@ main {
 
 .footer .section-title {
     text-align: center;
-    color: #c0392b;
+    color: #ffffff;
     margin-bottom: 50px;
     text-transform: uppercase;
 }
 #footer {
-    background: #c0392b !important;
+    background: #545454 !important;
 }
 #footer h5{
 	padding-left: 10px;
@@ -104,7 +104,3 @@ main {
 .footer-text-group > p {
   margin-left: 14px;
 }
-
-/* .footer-text-group > p {
-  border: 1px dashed yellow;
-} */
