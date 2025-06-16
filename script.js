@@ -218,6 +218,7 @@ function closeSidePanel() {
 }
 
 // Artwork slider functionality
+// Replace the setupArtworkSlider function with this improved version
 function setupArtworkSlider() {
   const artworksSlider = document.querySelector(".artworks-slider");
   if (!artworksSlider) return;
@@ -247,59 +248,72 @@ function setupArtworkSlider() {
 
   let isScrolling = false;
   let scrollTimeout;
+  let isSnapping = false;
 
-  // Handle scroll events
+  // Improved scroll event handling
   artworksSlider.addEventListener("scroll", () => {
-    if (isScrolling) return;
+    if (isScrolling || isSnapping) return;
 
     clearTimeout(scrollTimeout);
     scrollTimeout = setTimeout(() => {
       handleInfiniteScroll();
-    }, 100);
+    }, 150); // Increased timeout for smoother experience
   });
 
   function handleInfiniteScroll() {
+    if (isSnapping) return;
+    
     const scrollLeft = artworksSlider.scrollLeft;
     const maxScroll = artworksSlider.scrollWidth - artworksSlider.clientWidth;
 
     // If scrolled to the end (showing cloned items), jump to original position
-    if (scrollLeft >= maxScroll - 10) {
+    if (scrollLeft >= maxScroll - 5) {
       isScrolling = true;
+      artworksSlider.style.scrollBehavior = "auto";
       artworksSlider.scrollLeft = totalItems * itemWidth;
       setTimeout(() => {
         isScrolling = false;
-      }, 50);
+        artworksSlider.style.scrollBehavior = "smooth";
+      }, 10);
     }
     // If scrolled to the beginning (showing start clones), jump to end of originals
-    else if (scrollLeft <= 10) {
+    else if (scrollLeft <= 5) {
       isScrolling = true;
+      artworksSlider.style.scrollBehavior = "auto";
       artworksSlider.scrollLeft = totalItems * itemWidth;
       setTimeout(() => {
         isScrolling = false;
-      }, 50);
+        artworksSlider.style.scrollBehavior = "smooth";
+      }, 10);
     }
-
-    // Snap to nearest item
-    snapToNearestItem();
   }
 
+  // Improved snapping function
   function snapToNearestItem() {
-    if (isScrolling) return;
+    if (isScrolling || isSnapping) return;
 
+    isSnapping = true;
     const scrollLeft = artworksSlider.scrollLeft;
     const nearestItemIndex = Math.round(scrollLeft / itemWidth);
     const targetScrollLeft = nearestItemIndex * itemWidth;
 
     // Only snap if we're not already close enough
-    if (Math.abs(scrollLeft - targetScrollLeft) > 5) {
+    if (Math.abs(scrollLeft - targetScrollLeft) > 10) {
       artworksSlider.scrollTo({
         left: targetScrollLeft,
         behavior: "smooth",
       });
+      
+      // Wait for snap animation to complete
+      setTimeout(() => {
+        isSnapping = false;
+      }, 300);
+    } else {
+      isSnapping = false;
     }
   }
 
-  // Mouse drag functionality
+  // Improved mouse drag functionality
   let isDown = false;
   let startX;
   let scrollLeftStart;
@@ -308,6 +322,7 @@ function setupArtworkSlider() {
   artworksSlider.addEventListener("mousedown", (e) => {
     isDown = true;
     hasMoved = false;
+    isSnapping = false; // Stop any ongoing snapping
     artworksSlider.style.cursor = "grabbing";
     artworksSlider.style.scrollBehavior = "auto";
     startX = e.pageX - artworksSlider.offsetLeft;
@@ -316,20 +331,30 @@ function setupArtworkSlider() {
   });
 
   artworksSlider.addEventListener("mouseleave", () => {
-    isDown = false;
-    artworksSlider.style.cursor = "grab";
-    artworksSlider.style.scrollBehavior = "smooth";
-    if (hasMoved) {
-      setTimeout(snapToNearestItem, 100);
+    if (isDown) {
+      isDown = false;
+      artworksSlider.style.cursor = "grab";
+      artworksSlider.style.scrollBehavior = "smooth";
+      if (hasMoved) {
+        setTimeout(() => {
+          snapToNearestItem();
+          setTimeout(handleInfiniteScroll, 400);
+        }, 100);
+      }
     }
   });
 
   artworksSlider.addEventListener("mouseup", () => {
-    isDown = false;
-    artworksSlider.style.cursor = "grab";
-    artworksSlider.style.scrollBehavior = "smooth";
-    if (hasMoved) {
-      setTimeout(snapToNearestItem, 100);
+    if (isDown) {
+      isDown = false;
+      artworksSlider.style.cursor = "grab";
+      artworksSlider.style.scrollBehavior = "smooth";
+      if (hasMoved) {
+        setTimeout(() => {
+          snapToNearestItem();
+          setTimeout(handleInfiniteScroll, 400);
+        }, 100);
+      }
     }
   });
 
@@ -338,11 +363,11 @@ function setupArtworkSlider() {
     e.preventDefault();
     hasMoved = true;
     const x = e.pageX - artworksSlider.offsetLeft;
-    const walk = (x - startX) * 1.0;
+    const walk = (x - startX) * 0.8; // Reduced multiplier for smoother drag
     artworksSlider.scrollLeft = scrollLeftStart - walk;
   });
 
-  // Touch events for mobile
+  // Improved touch events for mobile
   let touchStartX = 0;
   let touchScrollStart = 0;
   let touchHasMoved = false;
@@ -353,6 +378,7 @@ function setupArtworkSlider() {
       touchStartX = e.touches[0].pageX;
       touchScrollStart = artworksSlider.scrollLeft;
       touchHasMoved = false;
+      isSnapping = false; // Stop any ongoing snapping
       artworksSlider.style.scrollBehavior = "auto";
     },
     { passive: true }
@@ -364,7 +390,7 @@ function setupArtworkSlider() {
       if (!touchStartX) return;
       touchHasMoved = true;
       const x = e.touches[0].pageX;
-      const walk = (touchStartX - x) * 1.2;
+      const walk = (touchStartX - x) * 1.0; // Reduced multiplier for smoother touch
       artworksSlider.scrollLeft = touchScrollStart + walk;
     },
     { passive: true }
@@ -378,38 +404,45 @@ function setupArtworkSlider() {
       if (touchHasMoved) {
         setTimeout(() => {
           snapToNearestItem();
-          setTimeout(handleInfiniteScroll, 200);
-        }, 100);
+          setTimeout(handleInfiniteScroll, 400);
+        }, 150);
       }
     },
     { passive: true }
   );
 
-  // Keyboard navigation
+  // Improved keyboard navigation
   artworksSlider.addEventListener("keydown", (e) => {
     if (e.key === "ArrowLeft") {
       e.preventDefault();
+      isSnapping = false;
       const currentScroll = artworksSlider.scrollLeft;
       artworksSlider.scrollTo({
         left: currentScroll - itemWidth,
         behavior: "smooth",
       });
-      setTimeout(handleInfiniteScroll, 300);
+      setTimeout(() => {
+        handleInfiniteScroll();
+      }, 400);
     } else if (e.key === "ArrowRight") {
       e.preventDefault();
+      isSnapping = false;
       const currentScroll = artworksSlider.scrollLeft;
       artworksSlider.scrollTo({
         left: currentScroll + itemWidth,
         behavior: "smooth",
       });
-      setTimeout(handleInfiniteScroll, 300);
+      setTimeout(() => {
+        handleInfiniteScroll();
+      }, 400);
     }
   });
 
-  // Make slider focusable for keyboard navigation
+  // Set initial styles
   artworksSlider.tabIndex = 0;
   artworksSlider.style.cursor = "grab";
   artworksSlider.style.outline = "none";
+  artworksSlider.style.scrollBehavior = "smooth";
 }
 
 function showQRPage() {

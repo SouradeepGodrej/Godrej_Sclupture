@@ -239,7 +239,8 @@ body {
     padding: 60px 0;
     background-color: #f8f9fa;
     width: 100%;
-    overflow-x: hidden;  /* Prevent horizontal scroll issues */
+    overflow-x: hidden;
+    /* Prevent horizontal scroll issues */
 }
 
 .section-title {
@@ -247,27 +248,26 @@ body {
     font-size: 2.5rem;
     color: #004B49;
     margin-bottom: 0px;
-    padding: 0 20px;  /* Add padding for mobile */
-    word-wrap: break-word; /* Handle long titles */
+    padding: 0 20px;
+    /* Add padding for mobile */
+    word-wrap: break-word;
+    /* Handle long titles */
 }
 
 .artworks-slider {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    will-change: scroll-position;
+    overscroll-behavior-x: contain;
     display: flex;
     gap: 30px;
     overflow-x: auto;
     padding: 20px;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    /* Smooth scrolling on iOS */
-    /* scrollbar-width: thin;
-    scrollbar-color: #004B49 #f1f1f1; */
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE/Edge */
-     scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    scroll-snap-type: x mandatory;
     scroll-padding: 20px;
-    scroll-behavior: smooth;
-     overscroll-behavior-x: contain;
-     scroll-snap-stop: always;
+    scroll-snap-stop: always;
 }
 
 .artworks-slider::-webkit-scrollbar {
@@ -276,13 +276,15 @@ body {
 
 .artwork-item {
     min-width: 250px;
-    width: 300px; /* Fixed width for consistency */
+    width: 300px;
+    /* Fixed width for consistency */
     background: white;
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    flex-shrink: 0; /* Prevent shrinking */
+    flex-shrink: 0;
+    /* Prevent shrinking */
     scroll-snap-align: center;
 }
 
@@ -295,7 +297,8 @@ body {
     width: 100%;
     height: 200px;
     object-fit: cover;
-    display: block; /* Remove any inline spacing */
+    display: block;
+    /* Remove any inline spacing */
 }
 
 .artwork-item h3 {
@@ -554,6 +557,7 @@ footer-text-2 p:hover {
         max-width: 1600px;
     }
 }
+
 @media (min-width: 1200px) and (max-width: 1399px) {
     .container {
         max-width: 1200px;
@@ -565,6 +569,7 @@ footer-text-2 p:hover {
         min-height: 540px;
     }
 }
+
 @media (min-width: 992px) and (max-width: 1199px) {
     .container {
         max-width: 960px;
@@ -592,6 +597,7 @@ footer-text-2 p:hover {
         padding: 35px;
     }
 }
+
 @media (min-width: 769px) and (max-width: 991px) {
     .container {
         padding: 0 20px;
@@ -605,6 +611,7 @@ footer-text-2 p:hover {
         height: 50vh;
         min-height: 400px;
     }
+
     .artwork-item {
         min-width: 260px;
     }
@@ -636,6 +643,7 @@ footer-text-2 p:hover {
         text-align: center;
     }
 }
+
 @media (max-width: 768px) {
     .header-container {
         padding: 0 15px;
@@ -727,6 +735,7 @@ footer-text-2 p:hover {
         font-size: 0.8rem;
     }
 }
+
 @media (max-width: 480px) {
     .container {
         padding: 0 10px;
@@ -796,6 +805,7 @@ footer-text-2 p:hover {
         height: 45px;
     }
 }
+
 @media (max-width: 320px) {
     .hero-slider {
         height: 200px;
@@ -804,7 +814,7 @@ footer-text-2 p:hover {
     .section-title {
         font-size: 1.4rem;
     }
-    
+
     .artwork-item {
         min-width: 200px;
     }
