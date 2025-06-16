@@ -2,7 +2,6 @@
 let currentSlide = 0;
 let slideInterval;
 const slides = document.querySelectorAll('.slide');
-// const sliderContainer = document.querySelector('.slider-container');
 const dots = document.querySelectorAll('.dot');
 let touchStartX = 0;
 let touchEndX = 0;
@@ -34,52 +33,76 @@ function initializeSlider() {
         });
     });
     
-    // Touch and Mouse events for slider
+    // Get slider container
     const sliderContainer = document.querySelector('.slider-container');
+    if (!sliderContainer) {
+        console.log('Slider container not found!');
+        return;
+    }
+    
     let isDragging = false;
     let startX = 0;
+    let mobileStartX = 0;
+    let mobileEndX = 0;
     
-    // TOUCH EVENTS (Mobile)
-    sliderContainer.addEventListener('touchstart', e => {
-        touchStartX = e.changedTouches[0].screenX;
-        e.stopPropagation();
-    });
-
-    sliderContainer.addEventListener('touchend', e => {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-        e.stopPropagation();
-    });
+    // MOBILE TOUCH EVENTS
+    sliderContainer.addEventListener('touchstart', (e) => {
+        mobileStartX = e.touches[0].clientX;
+        console.log('Touch start:', mobileStartX); // Debug log
+    }, { passive: true });
     
-    // MOUSE EVENTS (PC)
-    sliderContainer.addEventListener('mousedown', e => {
+    sliderContainer.addEventListener('touchend', (e) => {
+        mobileEndX = e.changedTouches[0].clientX;
+        console.log('Touch end:', mobileEndX); // Debug log
+        
+        const diff = mobileStartX - mobileEndX;
+        const swipeThreshold = 50;
+        
+        console.log('Swipe difference:', diff); // Debug log
+        
+        if (Math.abs(diff) > swipeThreshold) {
+            if (diff > 0) {
+                // Swipe left - next slide
+                console.log('Next slide');
+                nextSlide();
+                resetAutoSlide();
+            } else {
+                // Swipe right - previous slide
+                console.log('Previous slide');
+                const prevIndex = currentSlide === 0 ? slides.length - 1 : currentSlide - 1;
+                goToSlide(prevIndex);
+                resetAutoSlide();
+            }
+        }
+    }, { passive: true });
+    
+    // PC MOUSE EVENTS
+    sliderContainer.addEventListener('mousedown', (e) => {
         isDragging = true;
-        startX = e.screenX;
+        startX = e.clientX;
         sliderContainer.style.cursor = 'grabbing';
         e.preventDefault();
     });
     
-    sliderContainer.addEventListener('mousemove', e => {
+    sliderContainer.addEventListener('mousemove', (e) => {
         if (!isDragging) return;
         e.preventDefault();
     });
     
-    sliderContainer.addEventListener('mouseup', e => {
+    sliderContainer.addEventListener('mouseup', (e) => {
         if (!isDragging) return;
         isDragging = false;
         sliderContainer.style.cursor = 'grab';
         
-        const endX = e.screenX;
+        const endX = e.clientX;
         const diff = startX - endX;
         const swipeThreshold = 50;
         
         if (Math.abs(diff) > swipeThreshold) {
             if (diff > 0) {
-                // Drag left - next slide
                 nextSlide();
                 resetAutoSlide();
             } else {
-                // Drag right - previous slide
                 const prevIndex = currentSlide === 0 ? slides.length - 1 : currentSlide - 1;
                 goToSlide(prevIndex);
                 resetAutoSlide();
@@ -92,7 +115,7 @@ function initializeSlider() {
         sliderContainer.style.cursor = 'grab';
     });
     
-    // Set initial cursor
+    // Set cursor style
     sliderContainer.style.cursor = 'grab';
 }
 
@@ -411,16 +434,6 @@ document.querySelectorAll('img').forEach(img => {
         this.innerHTML = '<span style="color: #666;">Image not available</span>';
     });
 });
-
-// sliderContainer.addEventListener('touchstart', e => {
-//     touchStartX = e.changedTouches[0].screenX;
-//     e.stopPropagation(); // Prevent other touch handlers
-// });
-
-// sliderContainer.addEventListener('touchend', e => {
-//     touchEndX = e.changedTouches[0].screenX;
-//     handleSwipe();
-// });
 
 function handleSwipe() {
     const swipeThreshold = 50;
