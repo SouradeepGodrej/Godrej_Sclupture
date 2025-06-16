@@ -243,31 +243,48 @@ body {
     /* Prevent horizontal scroll issues */
 }
 
+.section-title-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    width: 100%;
+    padding: 0 20px; /* Add padding for mobile */
+}
+
 .section-title {
+    color: grey;
+    font-weight: 600;
+    font-size: 2.5rem; /* Base font size */
+    white-space: nowrap;
     text-align: center;
-    font-size: 2.5rem;
-    color: #004B49;
     margin-bottom: 0px;
-    padding: 0 20px;
-    /* Add padding for mobile */
     word-wrap: break-word;
-    /* Handle long titles */
+}
+
+.line {
+    flex: 1;
+    height: 2px;
+    min-width: 20px; /* Ensure minimum line width */
+}
+
+.left-line {
+    background: linear-gradient(to left, transparent, rgba(128, 128, 128, 0.8));
+}
+
+.right-line {
+    background: linear-gradient(to right, transparent, rgba(128, 128, 128, 0.8));
 }
 
 .artworks-slider {
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    will-change: scroll-position;
-    overscroll-behavior-x: contain;
     display: flex;
     gap: 30px;
     overflow-x: auto;
     padding: 20px;
     scrollbar-width: none;
     -ms-overflow-style: none;
-    scroll-snap-type: x mandatory;
-    scroll-padding: 20px;
-    scroll-snap-stop: always;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
 }
 
 .artworks-slider::-webkit-scrollbar {
@@ -277,14 +294,12 @@ body {
 .artwork-item {
     min-width: 250px;
     width: 300px;
-    /* Fixed width for consistency */
     background: white;
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     flex-shrink: 0;
-    /* Prevent shrinking */
     scroll-snap-align: center;
 }
 
@@ -516,31 +531,15 @@ footer-text-2 p:hover {
     }
 
     .section-title-wrapper {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 1rem;
-        width: 100%;
+        padding: 0 40px;
     }
-
+    
     .section-title {
-        color: grey;
-        font-weight: 600;
-        font-size: 1.5rem;
-        white-space: nowrap;
+        font-size: 1.5rem; /* Your preferred large screen size */
     }
-
+    
     .line {
-        flex: 1;
         height: 2px;
-    }
-
-    .left-line {
-        background: linear-gradient(to left, transparent, rgba(128, 128, 128, 0.8));
-    }
-
-    .right-line {
-        background: linear-gradient(to right, transparent, rgba(128, 128, 128, 0.8));
     }
 
 
@@ -568,6 +567,14 @@ footer-text-2 p:hover {
         height: 60vh;
         min-height: 540px;
     }
+
+    .section-title {
+        font-size: 2.3rem;
+    }
+    
+    .section-title-wrapper {
+        padding: 0 30px;
+    }
 }
 
 @media (min-width: 992px) and (max-width: 1199px) {
@@ -578,6 +585,10 @@ footer-text-2 p:hover {
 
     .section-title {
         font-size: 2.3rem;
+    }
+    
+    .section-title-wrapper {
+        padding: 0 25px;
     }
 
     .hero-slider {
@@ -605,6 +616,15 @@ footer-text-2 p:hover {
 
     .section-title {
         font-size: 2.2rem;
+    }
+    
+    .section-title-wrapper {
+        padding: 0 20px;
+        gap: 0.8rem;
+    }
+    
+    .line {
+        height: 1.5px;
     }
 
     .hero-slider {
@@ -659,7 +679,16 @@ footer-text-2 p:hover {
 
     .section-title {
         font-size: 1.8rem;
-        margin-bottom: 30px;
+    }
+    
+    .section-title-wrapper {
+        padding: 0 15px;
+        gap: 0.6rem;
+    }
+    
+    .line {
+        height: 1.5px;
+        min-width: 15px;
     }
 
     /* Make hero slider more mobile-friendly */
@@ -748,7 +777,16 @@ footer-text-2 p:hover {
 
     .section-title {
         font-size: 1.6rem;
-        margin-bottom: 25px;
+    }
+    
+    .section-title-wrapper {
+        padding: 0 10px;
+        gap: 0.5rem;
+    }
+    
+    .line {
+        height: 1px;
+        min-width: 10px;
     }
 
     .artwork-item {
@@ -811,8 +849,12 @@ footer-text-2 p:hover {
         height: 200px;
     }
 
-    .section-title {
+     .section-title {
         font-size: 1.4rem;
+    }
+    
+    .section-title-wrapper {
+        gap: 0.4rem;
     }
 
     .artwork-item {
