@@ -218,7 +218,6 @@ function closeSidePanel() {
 }
 
 // Artwork slider functionality
-// Replace the setupArtworkSlider function with this improved version
 function setupArtworkSlider() {
   const artworksSlider = document.querySelector(".artworks-slider");
   if (!artworksSlider) return;
@@ -262,7 +261,7 @@ function setupArtworkSlider() {
 
   function handleInfiniteScroll() {
     if (isSnapping) return;
-    
+
     const scrollLeft = artworksSlider.scrollLeft;
     const maxScroll = artworksSlider.scrollWidth - artworksSlider.clientWidth;
 
@@ -303,7 +302,7 @@ function setupArtworkSlider() {
         left: targetScrollLeft,
         behavior: "smooth",
       });
-      
+
       // Wait for snap animation to complete
       setTimeout(() => {
         isSnapping = false;
@@ -443,6 +442,53 @@ function setupArtworkSlider() {
   artworksSlider.style.cursor = "grab";
   artworksSlider.style.outline = "none";
   artworksSlider.style.scrollBehavior = "smooth";
+}
+
+function setupMobileBlurEffect() {
+  // Only apply on mobile devices
+  if (window.innerWidth > 768) return;
+
+  const artworksSlider = document.querySelector(".artworks-slider");
+  if (!artworksSlider) return;
+
+  const artworkItems = artworksSlider.querySelectorAll(".artwork-item");
+
+  function updateBlurEffect() {
+    if (window.innerWidth > 768) return; // Skip on desktop
+
+    const sliderRect = artworksSlider.getBoundingClientRect();
+    const sliderCenter = sliderRect.left + sliderRect.width / 2;
+    const blurThreshold = 100; // Distance from center where blur starts
+
+    artworkItems.forEach((item, index) => {
+      const itemRect = item.getBoundingClientRect();
+      const itemCenter = itemRect.left + itemRect.width / 2;
+      const distanceFromCenter = Math.abs(itemCenter - sliderCenter);
+
+      // Remove all blur classes first
+      item.classList.remove("blur-left", "blur-right", "center-focus");
+
+      if (distanceFromCenter < blurThreshold) {
+        // Item is in center - no blur
+        item.classList.add("center-focus");
+      } else if (itemCenter < sliderCenter) {
+        // Item is on the left side
+        item.classList.add("blur-left");
+      } else {
+        // Item is on the right side
+        item.classList.add("blur-right");
+      }
+    });
+  }
+  artworksSlider.addEventListener("scroll", updateBlurEffect);
+
+  // Update blur effect on window resize
+  window.addEventListener("resize", () => {
+    setTimeout(updateBlurEffect, 100);
+  });
+
+  // Initial setup
+  updateBlurEffect();
 }
 
 function showQRPage() {
