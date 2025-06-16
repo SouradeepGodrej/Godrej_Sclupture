@@ -265,6 +265,9 @@ body {
     -ms-overflow-style: none; /* IE/Edge */
      scroll-snap-type: x mandatory;
     scroll-padding: 20px;
+    scroll-behavior: smooth;
+     overscroll-behavior-x: contain;
+     scroll-snap-stop: always;
 }
 
 .artworks-slider::-webkit-scrollbar {
